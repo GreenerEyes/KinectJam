@@ -1,6 +1,6 @@
 ﻿namespace KinectJam
 {
-    partial class Form1
+    partial class KinectDisplay
     {
         /// <summary>
         /// Required designer variable.
@@ -30,6 +30,7 @@
         {
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
+            this.JointCoordinatesTextBox = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,11 +50,20 @@
             this.video.TabIndex = 1;
             this.video.TabStop = false;
             // 
+            // JointCoordinatesTextBox
+            // 
+            this.JointCoordinatesTextBox.Location = new System.Drawing.Point(659, 13);
+            this.JointCoordinatesTextBox.Name = "JointCoordinatesTextBox";
+            this.JointCoordinatesTextBox.Size = new System.Drawing.Size(274, 568);
+            this.JointCoordinatesTextBox.TabIndex = 2;
+            this.JointCoordinatesTextBox.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(671, 593);
+            this.ClientSize = new System.Drawing.Size(945, 593);
+            this.Controls.Add(this.JointCoordinatesTextBox);
             this.Controls.Add(this.video);
             this.Controls.Add(this.rtbMessages);
             this.Name = "Form1";
@@ -68,6 +78,7 @@
 
         private System.Windows.Forms.RichTextBox rtbMessages;
         private System.Windows.Forms.PictureBox video;
+        private System.Windows.Forms.RichTextBox JointCoordinatesTextBox;
     }
 }
 

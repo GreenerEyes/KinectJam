@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
+using static KinectJam.Program;
 
 
 /*References
@@ -18,7 +19,7 @@ using Microsoft.Kinect.Toolkit;
 
 namespace KinectJam
 {
-    public partial class Form1 : Form
+    public partial class KinectDisplay : Form
     {
         private KinectSensorChooser _chooser;
         private KinectSensor _sensor;
@@ -46,7 +47,7 @@ namespace KinectJam
 
 
 
-        public Form1()
+        public KinectDisplay(SelectionType selection)
         {
             InitializeComponent();
         }
@@ -121,18 +122,22 @@ namespace KinectJam
                 }
             }
         }
-
+        // Skeleton has joint collection, which is a list of joints, I can reference them by the joint type enum. F12 for viewing properties.
+        // skeleton.Joints[JointType.Head]
         private void DrawSkeletons()
         {
             foreach (Skeleton skeleton in this._skeletonData)
             {
-                if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
+                if (skeleton != null)
                 {
-                    DrawTrackedSkeletonJoints(skeleton.Joints);
-                }
-                else if (skeleton.TrackingState == SkeletonTrackingState.PositionOnly)
-                {
-                    DrawSkeletonPosition(skeleton.Position);
+                    if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
+                    {
+                        DrawTrackedSkeletonJoints(skeleton.Joints);
+                    }
+                    else if (skeleton.TrackingState == SkeletonTrackingState.PositionOnly)
+                    {
+                        DrawSkeletonPosition(skeleton.Position);
+                    }
                 }
             }
         }
@@ -164,7 +169,32 @@ namespace KinectJam
             DrawBone(jointCollection[JointType.KneeRight], jointCollection[JointType.AnkleRight]);
             DrawBone(jointCollection[JointType.AnkleRight], jointCollection[JointType.FootRight]);
 
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Head]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderCenter]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Spine]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HipCenter]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderRight]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowRight]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristRight]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandRight]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderLeft]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowLeft]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristLeft]));
+            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandLeft]));
+            JointCoordinatesTextBox.Text = string.Empty;
+            JointCoordinatesTextBox.Text = stringBuilder.ToString();
+
         }
+
+        private string PrintJointCoordinates(Joint joint)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            DepthImagePoint depthPoint = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
+            stringBuilder.Append(string.Format("{0} x: {1} y: {2}", joint.JointType.ToString(), depthPoint.X, depthPoint.Y));
+            return stringBuilder.ToString();
+        }
+
 
         private void DrawBone(Joint jointFrom, Joint jointTo)
         {
