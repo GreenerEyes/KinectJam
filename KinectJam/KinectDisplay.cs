@@ -44,10 +44,10 @@ namespace KinectJam
         private Pen _pen = new Pen(Brushes.Red, 6);
         private Pen _borderPen = new Pen(Brushes.Black, 3.0f);
 
+        public SelectionType _selection;
 
 
-
-        public KinectDisplay(SelectionType selection)
+        public KinectDisplay()
         {
             InitializeComponent();
         }

@@ -8,6 +8,7 @@ namespace KinectJam
 {
     public static class Program
     {
+        public static SelectionType _selection = SelectionType.Unknown;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,6 +18,9 @@ namespace KinectJam
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Selection());
+            KinectDisplay kinectDisplay = new KinectDisplay();
+            kinectDisplay._selection = _selection;
+            Application.Run(kinectDisplay);
         }
 
         public enum SelectionType

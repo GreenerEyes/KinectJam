@@ -25,11 +25,8 @@ namespace KinectJam
                 selection = SelectionType.RightArm;
             if (radioButton2.Checked)
                 selection = SelectionType.LeftArm;
-
-            KinectDisplay kinectDisplay = new KinectDisplay(selection);
-            kinectDisplay.Show();
-
-            this.Hide();
+            _selection = selection;
+            this.Close();
         }
     }
 }
