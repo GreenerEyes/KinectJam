@@ -40,8 +40,9 @@ namespace KinectJam
         //private readonly System.Windows.Media.Pen _inferredBonePen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Gray, 1);
 
         private Graphics _graphics;
-        private Rectangle _rectangle = new Rectangle(10, 10, 10, 10);
+        private Rectangle _rectangle = new Rectangle(340, 90, 190, 150);
         private Pen _pen = new Pen(Brushes.Red, 6);
+        private Pen _pengreen = new Pen(Brushes.Green, 6);
         private Pen _borderPen = new Pen(Brushes.Black, 3.0f);
 
         public SelectionType _selection;
@@ -107,7 +108,6 @@ namespace KinectJam
                 DrawSkeletons();
             }
             video.Image = _bitmap;
-            
 
         }
 
@@ -191,7 +191,7 @@ namespace KinectJam
         {
             StringBuilder stringBuilder = new StringBuilder();
             DepthImagePoint depthPoint = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
-            stringBuilder.Append(string.Format("{0} x: {1} y: {2}", joint.JointType.ToString(), depthPoint.X, depthPoint.Y));
+            stringBuilder.Append(string.Format("{0} x: {1} y: {2} Depth: {3}", joint.JointType.ToString(), depthPoint.X, depthPoint.Y, depthPoint.Depth));
             return stringBuilder.ToString();
         }
 
@@ -202,6 +202,7 @@ namespace KinectJam
             DepthImagePoint p2 = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(jointTo.Position, DepthImageFormat.Resolution640x480Fps30);
             if (!video.IsDisposed)
                 _graphics.DrawLine(_pen, p1.X, p1.Y, p2.X, p2.Y);
+                _graphics.DrawRectangle(_pengreen, _rectangle);
         }
 
         private void DrawSkeletonPosition(SkeletonPoint position)
