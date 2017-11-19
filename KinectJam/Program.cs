@@ -17,10 +17,7 @@ namespace KinectJam
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Selection());
-            KinectDisplay kinectDisplay = new KinectDisplay();
-            kinectDisplay._selection = _selection;
-            Application.Run(kinectDisplay);
+            Application.Run(new KinectDisplay());
         }
 
         public enum SelectionType
