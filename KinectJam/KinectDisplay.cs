@@ -35,6 +35,7 @@ namespace KinectJam
         private const double _jointThickness = 3;
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
+        private const int _maxPowerSize = 3000;
 
         //private readonly System.Windows.Media.Brush _centerPointBrush = System.Windows.Media.Brushes.Blue;
         //private readonly System.Windows.Media.Brush _trackedJointBrush = System.Windows.Media.Brushes.Red;
@@ -64,13 +65,31 @@ namespace KinectJam
         private double _totalDistance = 0;
         private double _totalWork = 0;
 
+        private double _totalTime = 0;
+
         public SelectionType _selection;
         public int frame = 0;
 
+        //private double[] workArray = new double[50];
+        private double[] timeArray = new double[50];
+        private double[] workArray = new double[50];
 
         public KinectDisplay()
         {
             InitializeComponent();
+            double initialTime = -50.0 * (1.0 / 30.0);
+            //timeArray.Add(initialTime);
+            for (int i = 0; i < 50; i++)
+            {
+                workArray[i] = 0;
+                if (i == 49)
+                    timeArray[i] = 0;
+                else
+                    timeArray[i] = Math.Round(initialTime += (1.0 / 30.0), 2);
+            }
+
+            PowerGraph.ChartAreas[0].AxisY.Maximum = _maxPowerSize;
+            PowerGraph.ChartAreas[0].AxisY.Minimum = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -178,24 +197,30 @@ namespace KinectJam
                                 double instantDistance = Distance(_wristFinal, _wristInitial);
                                 _totalDistance += instantDistance;
 
-                                double accelerationX = Time(_wristFinal.Position.X, _wristInitial.Position.X);
-                                double accelerationY = Time(_wristFinal.Position.Y, _wristInitial.Position.Y);
+                                //double summedTime = _totalTime + (1.0 / 30.0);
+                                _totalTime += (1.0/30.0);
+
+                                double accelerationX = Accel(_wristFinal.Position.X, _wristInitial.Position.X);
+                                double accelerationY = Accel(_wristFinal.Position.Y, _wristInitial.Position.Y);
                                 double forceX = Force(accelerationX);
                                 double forceY = Force(accelerationY, true);
 
                                 double work = Work(TotalForce(forceX, forceY), instantDistance);
                                 _totalWork += work;
+                                double power = Power(work);
 
-                                
-                                stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", _totalDistance));
-                                stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", accelerationX));
-                                stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", accelerationY));
-                                stringBuilder.AppendLine(string.Format("Force X: {0} (N)", forceX));
-                                stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", forceY));
-                                stringBuilder.AppendLine(string.Format("Work: {0} (J)", _totalWork));
+                                // Control+k+c to comment line
+                                stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance,2)));
+                                //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
+                                //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
+                                //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
+                                //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
+                                stringBuilder.AppendLine(string.Format("Work: {0} (J)", Math.Round(_totalWork, 2)));
+                                stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 2)));
 
                                 DistanceWorkTextBox.Text = string.Empty;
                                 DistanceWorkTextBox.Text = stringBuilder.ToString();
+                                GraphingPower(_totalTime, Math.Round(power, 2));
 
                                 _wristInitial = _wristFinal;
 
@@ -298,7 +323,7 @@ namespace KinectJam
             return Math.Sqrt(changeX + changeY);
         }
 
-        private double Time (float finalPosition, float initialPosition)
+        private double Accel(float finalPosition, float initialPosition)
         {
             double change = finalPosition - initialPosition;
             return (2 * (change)) / Math.Pow(1.0 / 30.0, 2.0);
@@ -325,6 +350,11 @@ namespace KinectJam
         private double Work(double totalForce, double distance)
         {
             return totalForce * distance;
+        }
+
+        private double Power(double work)
+        {
+            return work * 30.0;
         }
 
         private double Magnitude(Vector3 vector)
@@ -472,6 +502,23 @@ namespace KinectJam
         private void weightLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void GraphingPower(double time, double powerValue)
+        {
+            if (PowerGraph.IsHandleCreated)
+            {
+                workArray[workArray.Length - 1] = powerValue;
+                Array.Copy(workArray, 1, workArray, 0, workArray.Length - 1);
+                timeArray[timeArray.Length - 1] = Math.Round(time, 2);
+                Array.Copy(timeArray, 1, timeArray, 0, timeArray.Length - 1);
+
+                PowerGraph.Series["PowerData"].Points.Clear();
+                for (int i = 0; i < workArray.Count() - 1; i++)
+                {
+                    PowerGraph.Series["PowerData"].Points.AddXY(timeArray[i], workArray[i]);
+                }
+            }
         }
     }
 }

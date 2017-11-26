@@ -28,13 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.JointCoordinatesTextBox = new System.Windows.Forms.RichTextBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
             this.weightLabel = new System.Windows.Forms.Label();
             this.heldWeightTextbox = new System.Windows.Forms.TextBox();
+            this.PowerGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // rtbMessages
@@ -55,14 +60,15 @@
             // 
             // JointCoordinatesTextBox
             // 
-            this.JointCoordinatesTextBox.Location = new System.Drawing.Point(659, 35);
+            this.JointCoordinatesTextBox.Location = new System.Drawing.Point(940, 378);
             this.JointCoordinatesTextBox.Name = "JointCoordinatesTextBox";
-            this.JointCoordinatesTextBox.Size = new System.Drawing.Size(274, 337);
+            this.JointCoordinatesTextBox.Size = new System.Drawing.Size(274, 203);
             this.JointCoordinatesTextBox.TabIndex = 2;
             this.JointCoordinatesTextBox.Text = "";
             // 
             // DistanceWorkTextBox
             // 
+            this.DistanceWorkTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DistanceWorkTextBox.Location = new System.Drawing.Point(659, 378);
             this.DistanceWorkTextBox.Name = "DistanceWorkTextBox";
             this.DistanceWorkTextBox.Size = new System.Drawing.Size(274, 203);
@@ -86,11 +92,29 @@
             this.heldWeightTextbox.Size = new System.Drawing.Size(183, 20);
             this.heldWeightTextbox.TabIndex = 5;
             // 
+            // PowerGraph
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.PowerGraph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.PowerGraph.Legends.Add(legend1);
+            this.PowerGraph.Location = new System.Drawing.Point(659, 29);
+            this.PowerGraph.Name = "PowerGraph";
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Legend = "Legend1";
+            series1.Name = "PowerData";
+            this.PowerGraph.Series.Add(series1);
+            this.PowerGraph.Size = new System.Drawing.Size(555, 343);
+            this.PowerGraph.TabIndex = 6;
+            this.PowerGraph.Text = "chart1";
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(945, 593);
+            this.ClientSize = new System.Drawing.Size(1242, 589);
+            this.Controls.Add(this.PowerGraph);
             this.Controls.Add(this.heldWeightTextbox);
             this.Controls.Add(this.weightLabel);
             this.Controls.Add(this.DistanceWorkTextBox);
@@ -101,6 +125,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.video)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -114,6 +139,7 @@
         private System.Windows.Forms.RichTextBox DistanceWorkTextBox;
         private System.Windows.Forms.Label weightLabel;
         private System.Windows.Forms.TextBox heldWeightTextbox;
+        private System.Windows.Forms.DataVisualization.Charting.Chart PowerGraph;
     }
 }
 
