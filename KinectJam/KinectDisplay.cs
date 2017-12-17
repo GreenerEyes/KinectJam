@@ -138,6 +138,14 @@ namespace KinectJam
             }
         }
 
+        //private void NewSensor_ColorFrameReady(object sender, AllFramesReadyEventArgs e)
+        //{
+        //    using (ColorImageFrame frame = e.OpenColorImageFrame())
+        //    {
+        //        _bitmap = CreateBitMapFromColorFrame(frame);
+        //    }
+        //}
+
         private void NewSensor_SkeletonFrameReady(object sender, AllFramesReadyEventArgs e)
         {
             using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
@@ -159,6 +167,7 @@ namespace KinectJam
         {
             _bitmap = new Bitmap(640, 480, PixelFormat.Format16bppRgb565);
             NewSensor_DepthFrameReady(sender, e);
+            //NewSensor_ColorFrameReady(sender,e);
             NewSensor_SkeletonFrameReady(sender, e);
 
             video.Image = _bitmap;
@@ -172,9 +181,12 @@ namespace KinectJam
                         using (_graphics = Graphics.FromImage(_bitmap))
                         {
                             DepthImagePoint shoulder = GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]);
+                            //ColorImagePoint shoulder = GetColorPoint(skeleton.Joints[JointType.ShoulderRight]);
+
                             Rectangle exerciseArea = new Rectangle(shoulder.X - 25, shoulder.Y - 110, 275, 220);
 
                             double angle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
+                            //double angle = GetAngleColor(GetColorPoint(skeleton.Joints[JointType.ShoulderRight]), GetColorPoint(skeleton.Joints[JointType.ElbowRight]), GetColorPoint(skeleton.Joints[JointType.WristRight]));
 
                             bool isInInitialPosition = angle >= 0 && angle <= 10;
                             if (isInInitialPosition || _exerciseStarted)
@@ -274,6 +286,30 @@ namespace KinectJam
             return null;
         }
 
+        //private Bitmap CreateBitMapFromColorFrame(ColorImageFrame frame)
+        //{
+        //    if (frame != null)
+        //    {
+        //        Bitmap bitmapImage = new Bitmap(frame.Width, frame.Height, PixelFormat.Format16bppRgb565);
+        //        using (_graphics = Graphics.FromImage(bitmapImage))
+        //        {
+        //            _graphics = Graphics.FromImage(bitmapImage);
+        //            _graphics.Clear(Color.FromArgb(0, 34, 68));
+
+        //            byte[] pixelData = new byte[frame.PixelDataLength];
+        //            frame.CopyPixelDataTo(pixelData);
+        //            BitmapData bitmapData = bitmapImage.LockBits(new Rectangle(0, 0, frame.Width, frame.Height), ImageLockMode.WriteOnly, bitmapImage.PixelFormat);
+        //            IntPtr ptr = bitmapData.Scan0;
+        //            Marshal.Copy(pixelData, 0, ptr, frame.Width * frame.Height);
+        //            bitmapImage.UnlockBits(bitmapData);
+
+        //            return bitmapImage;
+        //        }
+        //    }
+        //    return null;
+        //}
+
+
         // F12 for viewing properties.
         // skeleton.Joints[JointType.Head]
         private void DrawSkeletons()
@@ -300,6 +336,12 @@ namespace KinectJam
             return Math.Acos(dotProduct) * (180 / Math.PI);
         }
 
+        //private double GetAngleColor(ColorImagePoint shoulder, ColorImagePoint elbow, ColorImagePoint wrist)
+        //{
+        //    double dotProduct = DotProductColor(shoulder, elbow, wrist);
+        //    return Math.Acos(dotProduct) * (180 / Math.PI);
+        //}
+
         private double DotProduct(DepthImagePoint joint1, DepthImagePoint joint2, DepthImagePoint joint3)
         {
             Vector3 vectorA = new Vector3();
@@ -315,6 +357,22 @@ namespace KinectJam
             double magnitude = Magnitude(vectorA) * Magnitude(vectorB);
             return (u + v) / (Magnitude(vectorA) * Magnitude(vectorB));
         }
+
+        //private double DotProductColor(ColorImagePoint joint1, ColorImagePoint joint2, ColorImagePoint joint3)
+        //{
+        //    Vector3 vectorA = new Vector3();
+        //    vectorA.X = (joint1.X - joint2.X);
+        //    vectorA.Y = (joint1.Y - joint2.Y);
+        //    Vector3 vectorB = new Vector3();
+        //    vectorB.X = (joint2.X - joint3.X);
+        //    vectorB.Y = (joint2.Y - joint3.Y);
+
+        //    double u = vectorA.X * vectorB.X;
+        //    double v = vectorA.Y * vectorB.Y;
+        //    double total = u + v;
+        //    double magnitude = Magnitude(vectorA) * Magnitude(vectorB);
+        //    return (u + v) / (Magnitude(vectorA) * Magnitude(vectorB));
+        //}
         
         private double Distance(Joint final, Joint initial)
         {
@@ -335,7 +393,7 @@ namespace KinectJam
             if (double.TryParse(heldWeightTextbox.Text, out heldWeight))
             {
                 heldWeight = heldWeight * 0.4536;
-                return accountForGravity ? (heldWeight * acceleration) + (9.81 * heldWeight) : heldWeight * acceleration;
+                return accountForGravity ? (heldWeight * acceleration) - (9.81 * heldWeight) : heldWeight * acceleration;
             }
             return 0;
         }
@@ -438,6 +496,11 @@ namespace KinectJam
             return _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
         }
         
+        //private ColorImagePoint GetColorPoint(Joint joint)
+        //{
+        //    return _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
+        //}
+
         private string PrintJointCoordinates(Joint joint)
         {
             StringBuilder stringBuilder = new StringBuilder();
