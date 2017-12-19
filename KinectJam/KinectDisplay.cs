@@ -14,6 +14,8 @@ using Microsoft.Kinect.Toolkit.Fusion;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+// Control+k+c to comment line
+// Control+k+u to uncomment line
 
 /*References
  * https://code.msdn.microsoft.com/windowsdesktop/Beginning-Kinect-for-a198d400
@@ -35,7 +37,7 @@ namespace KinectJam
         private const double _jointThickness = 3;
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
-        private const int _maxPowerSize = 3000;
+        private const int _maxPowerSize = 1500;
 
         //private readonly System.Windows.Media.Brush _centerPointBrush = System.Windows.Media.Brushes.Blue;
         //private readonly System.Windows.Media.Brush _trackedJointBrush = System.Windows.Media.Brushes.Red;
@@ -64,13 +66,16 @@ namespace KinectJam
 
         private double _totalDistance = 0;
         private double _totalWork = 0;
+        private double _totalFilteredWork = 0;
 
         private double _totalTime = 0;
 
         public SelectionType _selection;
         public int frame = 0;
 
-        //private double[] workArray = new double[50];
+        private double _alpha = 0.98;
+        private double _previousFilteredWork = 0;
+
         private double[] timeArray = new double[50];
         private double[] workArray = new double[50];
 
@@ -209,7 +214,6 @@ namespace KinectJam
                                 double instantDistance = Distance(_wristFinal, _wristInitial);
                                 _totalDistance += instantDistance;
 
-                                //double summedTime = _totalTime + (1.0 / 30.0);
                                 _totalTime += (1.0/30.0);
 
                                 double accelerationX = Accel(_wristFinal.Position.X, _wristInitial.Position.X);
@@ -221,21 +225,28 @@ namespace KinectJam
                                 _totalWork += work;
                                 double power = Power(work);
 
-                                // Control+k+c to comment line
-                                stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance,2)));
+                                double filteredwork = FilteredWork(_alpha, _previousFilteredWork, work);
+                                _totalFilteredWork += filteredwork;
+                                double filteredpower = Power(filteredwork);
+
                                 //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
                                 //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
                                 //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
                                 //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
-                                stringBuilder.AppendLine(string.Format("Work: {0} (J)", Math.Round(_totalWork, 2)));
-                                stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 2)));
+
+                                stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 2)));
+                                stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 1)));
+                                stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 1)));
+                                stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 1)));
+                                stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 1)));
 
                                 DistanceWorkTextBox.Text = string.Empty;
                                 DistanceWorkTextBox.Text = stringBuilder.ToString();
-                                GraphingPower(_totalTime, Math.Round(power, 2));
+                                GraphingPower(_totalTime, Math.Round(filteredpower, 2));
 
                                 _wristInitial = _wristFinal;
 
+                                _previousFilteredWork = filteredwork;
 
                                 if (_exerciseStarted && (angle >= 80 && angle <= 100))
                                     _graphics.DrawRectangle(_penBlue, exerciseArea);
@@ -410,6 +421,12 @@ namespace KinectJam
             return totalForce * distance;
         }
 
+        private double FilteredWork(double alpha, double previousFilteredWork, double work)
+        {
+            // y(n) = alpha*y(n-1) + (1-alpha)*x(n)
+            return alpha *previousFilteredWork + (1.0 - alpha) * work;
+        }
+
         private double Power(double work)
         {
             return work * 30.0;
@@ -509,6 +526,13 @@ namespace KinectJam
             return stringBuilder.ToString();
         }
 
+        //private string PrintJointCoordinatesFromColor(Joint joint)
+        //{
+        //    StringBuilder stringBuilder = new StringBuilder();
+        //    ColorImagePoint imagePoint = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
+        //    stringBuilder.Append(string.Format("{0} x: {1} y: {2} Depth: {3}", joint.JointType.ToString(), imagePoint.X, imagePoint.Y, imagePoint.Depth));
+        //    return stringBuilder.ToString();
+        //}
 
         private void DrawBone(Joint jointFrom, Joint jointTo)
         {
@@ -517,6 +541,14 @@ namespace KinectJam
             if (!video.IsDisposed)
                 _graphics.DrawLine(_penWhite, p1.X, p1.Y, p2.X, p2.Y);
         }
+
+        //private void DrawBoneFromColor(Joint jointFrom, Joint jointTo)
+        //{
+        //    ColorImagePoint p1 = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(jointFrom.Position, ColorImageFormat.RgbResolution640x480Fps30);
+        //    ColorImagePoint p2 = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(jointTo.Position, ColorImageFormat.RgbResolution640x480Fps30);
+        //    if (!video.IsDisposed)
+        //        _graphics.DrawLine(_penWhite, p1.X, p1.Y, p2.X, p2.Y);
+        //}
 
         private void DrawPoint(Joint joint)
         {
@@ -529,28 +561,21 @@ namespace KinectJam
             }
         }
 
+        //private void DrawPointFromColor(Joint joint)
+        //{
+        //    ColorImagePoint point = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
+        //    if(!video.IsDisposed)
+        //    {
+        //        RectangleF rectangle = new RectangleF(point.X, point.Y, 10, 10);
+        //        _graphics.DrawEllipse(_penRed, rectangle);
+        //        _graphics.FillEllipse(Brushes.Red, rectangle);
+        //    }
+        //}
+
         private void DrawSkeletonPosition(SkeletonPoint position)
         {
 
         }
-
-        //private void DrawBone(Joint jointFrom, Joint jointTo)
-        //{
-        //    if (jointFrom.TrackingState == JointTrackingState.NotTracked || jointTo.TrackingState == JointTrackingState.NotTracked)
-        //    {
-        //        return; // nothing to draw, one of the joints is not tracked
-        //    }
-
-        //    if (jointFrom.TrackingState == JointTrackingState.Inferred || jointTo.TrackingState == JointTrackingState.Inferred)
-        //    {
-        //        DrawNonTrackedBoneLine(jointFrom.Position, jointTo.Position);  // Draw thin lines if either one of the joints is inferred
-        //    }
-
-        //    if (jointFrom.TrackingState == JointTrackingState.Tracked && jointTo.TrackingState == JointTrackingState.Tracked)
-        //    {
-        //        DrawTrackedBoneLine(jointFrom.Position, jointTo.Position);  // Draw bold lines if the joints are both tracked
-        //    }
-        //}
 
         private void DrawTrackedBoneLine(SkeletonPoint jointFromPosition, SkeletonPoint jointToPosition)
         {

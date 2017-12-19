@@ -100,6 +100,7 @@
             this.PowerGraph.Legends.Add(legend1);
             this.PowerGraph.Location = new System.Drawing.Point(659, 29);
             this.PowerGraph.Name = "PowerGraph";
+            series1.BorderWidth = 5;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series1.Legend = "Legend1";
