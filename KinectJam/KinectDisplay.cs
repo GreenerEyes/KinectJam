@@ -128,6 +128,8 @@ namespace KinectJam
             {
                 _sensor.Start();
                 rtbMessages.Text = "Kinect Started" + "\r";
+                CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
+                
             }
             catch (System.IO.IOException)
             {
@@ -196,88 +198,91 @@ namespace KinectJam
 
             video.Image = _bitmap;
 
-            foreach(Skeleton skeleton in this._skeletonData)
+            //CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
+
+            foreach (Skeleton skeleton in this._skeletonData)
             {
-                if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
-                {
-                    if (_bitmap != null)
+                if (skeleton != null)
+                    if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                     {
-                        using (_graphics = Graphics.FromImage(_bitmap))
+                        if (_bitmap != null)
                         {
-                            DepthImagePoint shoulder = GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]);
-                            //ColorImagePoint shoulder = GetColorPoint(skeleton.Joints[JointType.ShoulderRight]);
-
-                            Rectangle exerciseArea = new Rectangle(shoulder.X - 25, shoulder.Y - 110, 275, 220);
-
-                            double angle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
-                            //double angle = GetAngleColor(GetColorPoint(skeleton.Joints[JointType.ShoulderRight]), GetColorPoint(skeleton.Joints[JointType.ElbowRight]), GetColorPoint(skeleton.Joints[JointType.WristRight]));
-
-                            bool isInInitialPosition = angle >= 0 && angle <= 10;
-                            if (isInInitialPosition || _exerciseStarted)
+                            using (_graphics = Graphics.FromImage(_bitmap))
                             {
-                                if (isInInitialPosition && !_exerciseStarted)
+                                DepthImagePoint shoulder = GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]);
+                                //ColorImagePoint shoulder = GetColorPoint(skeleton.Joints[JointType.ShoulderRight]);
+
+                                Rectangle exerciseArea = new Rectangle(shoulder.X - 25, shoulder.Y - 110, 275, 220);
+
+                                double angle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
+                                //double angle = GetAngleColor(GetColorPoint(skeleton.Joints[JointType.ShoulderRight]), GetColorPoint(skeleton.Joints[JointType.ElbowRight]), GetColorPoint(skeleton.Joints[JointType.WristRight]));
+
+                                bool isInInitialPosition = angle >= 0 && angle <= 10;
+                                if (isInInitialPosition || _exerciseStarted)
                                 {
-                                    _initialShoulderPoint = skeleton.Joints[JointType.ShoulderRight];
-                                    _initialElbowPoint = skeleton.Joints[JointType.ElbowRight];
-                                    _initialWristPoint = skeleton.Joints[JointType.WristRight];
+                                    if (isInInitialPosition && !_exerciseStarted)
+                                    {
+                                        _initialShoulderPoint = skeleton.Joints[JointType.ShoulderRight];
+                                        _initialElbowPoint = skeleton.Joints[JointType.ElbowRight];
+                                        _initialWristPoint = skeleton.Joints[JointType.WristRight];
 
-                                    _wristFinal = _initialWristPoint;
-                                    _wristInitial = _initialWristPoint;
-                                    _exerciseStarted = true;
+                                        _wristFinal = _initialWristPoint;
+                                        _wristInitial = _initialWristPoint;
+                                        _exerciseStarted = true;
+                                    }
+                                    StringBuilder stringBuilder = new StringBuilder();
+
+
+                                    _wristFinal = skeleton.Joints[JointType.WristRight];
+
+                                    double instantDistance = Distance(_wristFinal, _wristInitial);
+                                    _totalDistance += instantDistance;
+
+                                    _totalTime += (1.0 / 30.0);
+
+                                    double accelerationX = Accel(_wristFinal.Position.X, _wristInitial.Position.X);
+                                    double accelerationY = Accel(_wristFinal.Position.Y, _wristInitial.Position.Y);
+                                    double forceX = Force(accelerationX);
+                                    double forceY = Force(accelerationY, true);
+
+                                    double work = Work(TotalForce(forceX, forceY), instantDistance);
+                                    _totalWork += work;
+                                    double power = Power(work);
+
+                                    double filteredwork = FilteredWork(_alpha, _previousFilteredWork, work);
+                                    _totalFilteredWork += filteredwork;
+                                    double filteredpower = Power(filteredwork);
+
+                                    //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
+                                    //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
+                                    //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
+                                    //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
+
+                                    stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 2)));
+                                    stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 1)));
+                                    stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 1)));
+                                    stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 1)));
+                                    stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 1)));
+
+                                    DistanceWorkTextBox.Text = string.Empty;
+                                    DistanceWorkTextBox.Text = stringBuilder.ToString();
+                                    GraphingPower(_totalTime, Math.Round(filteredpower, 2));
+
+                                    _wristInitial = _wristFinal;
+
+                                    _previousFilteredWork = filteredwork;
+
+                                    if (_exerciseStarted && (angle >= 80 && angle <= 100))
+                                        _graphics.DrawRectangle(_penBlue, exerciseArea);
+                                    else
+                                        _graphics.DrawRectangle(_penGreen, exerciseArea);
+
                                 }
-                                StringBuilder stringBuilder = new StringBuilder();
-
-
-                                _wristFinal = skeleton.Joints[JointType.WristRight];
-                                
-                                double instantDistance = Distance(_wristFinal, _wristInitial);
-                                _totalDistance += instantDistance;
-
-                                _totalTime += (1.0/30.0);
-
-                                double accelerationX = Accel(_wristFinal.Position.X, _wristInitial.Position.X);
-                                double accelerationY = Accel(_wristFinal.Position.Y, _wristInitial.Position.Y);
-                                double forceX = Force(accelerationX);
-                                double forceY = Force(accelerationY, true);
-
-                                double work = Work(TotalForce(forceX, forceY), instantDistance);
-                                _totalWork += work;
-                                double power = Power(work);
-
-                                double filteredwork = FilteredWork(_alpha, _previousFilteredWork, work);
-                                _totalFilteredWork += filteredwork;
-                                double filteredpower = Power(filteredwork);
-
-                                //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
-                                //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
-                                //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
-                                //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
-
-                                stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 2)));
-                                stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 1)));
-                                stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 1)));
-                                stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 1)));
-                                stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 1)));
-
-                                DistanceWorkTextBox.Text = string.Empty;
-                                DistanceWorkTextBox.Text = stringBuilder.ToString();
-                                GraphingPower(_totalTime, Math.Round(filteredpower, 2));
-
-                                _wristInitial = _wristFinal;
-
-                                _previousFilteredWork = filteredwork;
-
-                                if (_exerciseStarted && (angle >= 80 && angle <= 100))
-                                    _graphics.DrawRectangle(_penBlue, exerciseArea);
                                 else
-                                    _graphics.DrawRectangle(_penGreen, exerciseArea);
-
+                                    _graphics.DrawRectangle(_penRed, exerciseArea);
                             }
-                            else
-                                _graphics.DrawRectangle(_penRed, exerciseArea);
                         }
-                    } 
-                }
+                    }
             }
         }
 
@@ -626,6 +631,18 @@ namespace KinectJam
                     PowerGraph.Series["PowerData"].Points.AddXY(timeArray[i], workArray[i]);
                 }
             }
+        }
+
+        private void IncreaseAngleButton_Click(object sender, EventArgs e)
+        {
+            _sensor.ElevationAngle++;
+            CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
+        }
+
+        private void DecreaseAngleButton_Click(object sender, EventArgs e)
+        {
+            _sensor.ElevationAngle--;
+            CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
         }
     }
 }
