@@ -30,6 +30,8 @@ namespace KinectJam
         private KinectSensor _sensor;
         private Skeleton[] _skeletonData;
         private Bitmap _bitmap;
+        private byte[] _colorData;
+        private IntPtr _colorPtr;
 
         private const float _renderWidth = 640.0f;
         private const float _renderHeight = 480.0f;
@@ -117,7 +119,7 @@ namespace KinectJam
 
             _sensor.SkeletonStream.Enable();
             _sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
-            _sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+            //_sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
 
             _skeletonData = new Skeleton[_sensor.SkeletonStream.FrameSkeletonArrayLength];
             _sensor.AllFramesReady += NewSensor_AllFramesReady;
@@ -143,13 +145,30 @@ namespace KinectJam
             }
         }
 
-        //private void NewSensor_ColorFrameReady(object sender, AllFramesReadyEventArgs e)
-        //{
-        //    using (ColorImageFrame frame = e.OpenColorImageFrame())
-        //    {
-        //        _bitmap = CreateBitMapFromColorFrame(frame);
-        //    }
-        //}
+        private void NewSensor_ColorFrameReady(object sender, AllFramesReadyEventArgs e)
+        {
+            using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+            {
+                if (colorFrame == null) return;
+                if (_colorData == null)
+                    _colorData = new byte[colorFrame.PixelDataLength];
+                colorFrame.CopyPixelDataTo(_colorData);
+                Marshal.FreeHGlobal(_colorPtr);
+                _colorPtr = Marshal.AllocHGlobal(_colorData.Length);
+                Marshal.Copy(_colorData, 0, _colorPtr, _colorData.Length);
+
+                _bitmap = new Bitmap(
+                    colorFrame.Width,
+                    colorFrame.Height,
+                    colorFrame.Width * colorFrame.BytesPerPixel,
+                    PixelFormat.Format32bppRgb,
+                    _colorPtr);
+
+                //colorFrame.CopyPixelDataTo(_colorData);
+                //_bitmap = CreateBitMapFromColorFrame(colorFrame, _colorData);
+                ////_bitmap = CreateBitMapFromColorFrame(frame);
+            }
+        }
 
         private void NewSensor_SkeletonFrameReady(object sender, AllFramesReadyEventArgs e)
         {
@@ -171,8 +190,8 @@ namespace KinectJam
         private void NewSensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
             _bitmap = new Bitmap(640, 480, PixelFormat.Format16bppRgb565);
-            NewSensor_DepthFrameReady(sender, e);
-            //NewSensor_ColorFrameReady(sender,e);
+            //NewSensor_DepthFrameReady(sender, e);
+            NewSensor_ColorFrameReady(sender, e);
             NewSensor_SkeletonFrameReady(sender, e);
 
             video.Image = _bitmap;
@@ -297,28 +316,28 @@ namespace KinectJam
             return null;
         }
 
-        //private Bitmap CreateBitMapFromColorFrame(ColorImageFrame frame)
-        //{
-        //    if (frame != null)
-        //    {
-        //        Bitmap bitmapImage = new Bitmap(frame.Width, frame.Height, PixelFormat.Format16bppRgb565);
-        //        using (_graphics = Graphics.FromImage(bitmapImage))
-        //        {
-        //            _graphics = Graphics.FromImage(bitmapImage);
-        //            _graphics.Clear(Color.FromArgb(0, 34, 68));
+        private Bitmap CreateBitMapFromColorFrame(ColorImageFrame frame, byte[] colorData)
+        {
+            if (frame != null)
+            {
+                Bitmap bitmapImage = new Bitmap(frame.Width, frame.Height, PixelFormat.Format16bppRgb565);
+                using (_graphics = Graphics.FromImage(bitmapImage))
+                {
+                    _graphics = Graphics.FromImage(bitmapImage);
+                    _graphics.Clear(Color.FromArgb(0, 34, 68));
 
-        //            byte[] pixelData = new byte[frame.PixelDataLength];
-        //            frame.CopyPixelDataTo(pixelData);
-        //            BitmapData bitmapData = bitmapImage.LockBits(new Rectangle(0, 0, frame.Width, frame.Height), ImageLockMode.WriteOnly, bitmapImage.PixelFormat);
-        //            IntPtr ptr = bitmapData.Scan0;
-        //            Marshal.Copy(pixelData, 0, ptr, frame.Width * frame.Height);
-        //            bitmapImage.UnlockBits(bitmapData);
+                    //byte[] pixelData = new byte[frame.PixelDataLength];
+                    //frame.CopyPixelDataTo(pixelData);
+                    BitmapData bitmapData = bitmapImage.LockBits(new Rectangle(0, 0, frame.Width, frame.Height), ImageLockMode.WriteOnly, bitmapImage.PixelFormat);
+                    IntPtr ptr = bitmapData.Scan0;
+                    Marshal.Copy(colorData, 0, ptr, frame.Width * frame.Height);
+                    bitmapImage.UnlockBits(bitmapData);
 
-        //            return bitmapImage;
-        //        }
-        //    }
-        //    return null;
-        //}
+                    return bitmapImage;
+                }
+            }
+            return null;
+        }
 
 
         // F12 for viewing properties.
