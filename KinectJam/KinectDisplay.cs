@@ -81,6 +81,10 @@ namespace KinectJam
         private double[] timeArray = new double[50];
         private double[] workArray = new double[50];
 
+        private bool sliderMouseDown = false;
+        private bool sliderScrolling = false;
+
+
         public KinectDisplay()
         {
             InitializeComponent();
@@ -129,7 +133,7 @@ namespace KinectJam
                 _sensor.Start();
                 rtbMessages.Text = "Kinect Started" + "\r";
                 CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
-                
+                AngleSlider.Value = _sensor.ElevationAngle;
             }
             catch (System.IO.IOException)
             {
@@ -258,11 +262,11 @@ namespace KinectJam
                                     //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
                                     //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
 
-                                    stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 2)));
-                                    stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 1)));
-                                    stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 1)));
-                                    stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 1)));
-                                    stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 1)));
+                                    stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 0)));
+                                    stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 0)));
+                                    stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 0)));
+                                    stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 0)));
+                                    stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 0)));
 
                                     DistanceWorkTextBox.Text = string.Empty;
                                     DistanceWorkTextBox.Text = stringBuilder.ToString();
@@ -514,22 +518,22 @@ namespace KinectJam
             DrawPoint(jointCollection[JointType.AnkleRight]);
             DrawPoint(jointCollection[JointType.FootRight]);
 
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Head]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderCenter]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Spine]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HipCenter]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderRight]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowRight]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristRight]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandRight]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderLeft]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowLeft]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristLeft]));
-            stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandLeft]));
+            //StringBuilder stringBuilder = new StringBuilder();
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Head]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderCenter]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Spine]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HipCenter]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderRight]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowRight]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristRight]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandRight]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ShoulderLeft]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.ElbowLeft]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.WristLeft]));
+            //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.HandLeft]));
 
-            JointCoordinatesTextBox.Text = string.Empty;
-            JointCoordinatesTextBox.Text = stringBuilder.ToString();
+            //JointCoordinatesTextBox.Text = string.Empty;
+            //JointCoordinatesTextBox.Text = stringBuilder.ToString();
         }
 
         private DepthImagePoint GetDepthPoint(Joint joint)
@@ -537,24 +541,11 @@ namespace KinectJam
             return _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
         }
         
-        //private ColorImagePoint GetColorPoint(Joint joint)
-        //{
-        //    return _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
-        //}
-
-        private string PrintJointCoordinates(Joint joint)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            DepthImagePoint depthPoint = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
-            stringBuilder.Append(string.Format("{0} x: {1} y: {2} Depth: {3}", joint.JointType.ToString(), depthPoint.X, depthPoint.Y, depthPoint.Depth));
-            return stringBuilder.ToString();
-        }
-
-        //private string PrintJointCoordinatesFromColor(Joint joint)
+        //private string PrintJointCoordinates(Joint joint)
         //{
         //    StringBuilder stringBuilder = new StringBuilder();
-        //    ColorImagePoint imagePoint = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
-        //    stringBuilder.Append(string.Format("{0} x: {1} y: {2} Depth: {3}", joint.JointType.ToString(), imagePoint.X, imagePoint.Y, imagePoint.Depth));
+        //    DepthImagePoint depthPoint = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
+        //    stringBuilder.Append(string.Format("{0} x: {1} y: {2} Depth: {3}", joint.JointType.ToString(), depthPoint.X, depthPoint.Y, depthPoint.Depth));
         //    return stringBuilder.ToString();
         //}
 
@@ -566,14 +557,6 @@ namespace KinectJam
                 _graphics.DrawLine(_penWhite, p1.X, p1.Y, p2.X, p2.Y);
         }
 
-        //private void DrawBoneFromColor(Joint jointFrom, Joint jointTo)
-        //{
-        //    ColorImagePoint p1 = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(jointFrom.Position, ColorImageFormat.RgbResolution640x480Fps30);
-        //    ColorImagePoint p2 = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(jointTo.Position, ColorImageFormat.RgbResolution640x480Fps30);
-        //    if (!video.IsDisposed)
-        //        _graphics.DrawLine(_penWhite, p1.X, p1.Y, p2.X, p2.Y);
-        //}
-
         private void DrawPoint(Joint joint)
         {
             DepthImagePoint point = _sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, DepthImageFormat.Resolution640x480Fps30);
@@ -584,17 +567,6 @@ namespace KinectJam
                 _graphics.FillEllipse(Brushes.Red, rectangle);
             }
         }
-
-        //private void DrawPointFromColor(Joint joint)
-        //{
-        //    ColorImagePoint point = _sensor.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position, ColorImageFormat.RgbResolution640x480Fps30);
-        //    if(!video.IsDisposed)
-        //    {
-        //        RectangleF rectangle = new RectangleF(point.X, point.Y, 10, 10);
-        //        _graphics.DrawEllipse(_penRed, rectangle);
-        //        _graphics.FillEllipse(Brushes.Red, rectangle);
-        //    }
-        //}
 
         private void DrawSkeletonPosition(SkeletonPoint position)
         {
@@ -643,6 +615,27 @@ namespace KinectJam
         {
             _sensor.ElevationAngle--;
             CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
+        }
+
+        private void AngleSlider_Scroll(object sender, EventArgs e)
+        {
+            sliderScrolling = true;
+        }
+
+        private void AngleSlider_MouseUp_1(object sender, MouseEventArgs e)
+        {
+            if (sliderMouseDown == true && sliderScrolling == true)
+            {
+                _sensor.ElevationAngle = AngleSlider.Value;
+                CurrentAngleTextbox.Text = _sensor.ElevationAngle.ToString();
+                sliderScrolling = false;
+                sliderMouseDown = false;
+            }
+        }
+
+        private void AngleSlider_MouseDown(object sender, MouseEventArgs e)
+        {
+            sliderMouseDown = true;
         }
     }
 }
