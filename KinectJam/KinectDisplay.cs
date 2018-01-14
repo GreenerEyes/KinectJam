@@ -84,6 +84,8 @@ namespace KinectJam
         private bool sliderMouseDown = false;
         private bool sliderScrolling = false;
 
+        private bool _paused = false;
+
 
         public KinectDisplay()
         {
@@ -257,19 +259,23 @@ namespace KinectJam
                                     _totalFilteredWork += filteredwork;
                                     double filteredpower = Power(filteredwork);
 
-                                    //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
-                                    //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
-                                    //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
-                                    //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
+                                    if (_paused == false)
+                                    {
+                                        //stringBuilder.AppendLine(string.Format("Acceleration X: {0} (m/s^2)", Math.Round(accelerationX,2)));
+                                        //stringBuilder.AppendLine(string.Format("Acceleration Y: {0} (m/s^2)", Math.Round(accelerationY)));
+                                        //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
+                                        //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
 
-                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalDistance, 0)));
-                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalWork, 0)));
-                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(power, 0)));
-                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalFilteredWork, 0)));
-                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredpower, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalDistance, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalWork, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(power, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalFilteredWork, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredpower, 0)));
 
-                                    DistanceWorkTextBox.Text = string.Empty;
-                                    DistanceWorkTextBox.Text = stringBuilder.ToString();
+                                        DistanceWorkTextBox.Text = string.Empty;
+                                        DistanceWorkTextBox.Text = stringBuilder.ToString();
+                                    }
+
                                     GraphingPower(_totalTime, Math.Round(filteredpower, 2));
 
                                     _wristInitial = _wristFinal;
@@ -334,9 +340,6 @@ namespace KinectJam
                 {
                     _graphics = Graphics.FromImage(bitmapImage);
                     _graphics.Clear(Color.FromArgb(0, 34, 68));
-
-                    //byte[] pixelData = new byte[frame.PixelDataLength];
-                    //frame.CopyPixelDataTo(pixelData);
                     BitmapData bitmapData = bitmapImage.LockBits(new Rectangle(0, 0, frame.Width, frame.Height), ImageLockMode.WriteOnly, bitmapImage.PixelFormat);
                     IntPtr ptr = bitmapData.Scan0;
                     Marshal.Copy(colorData, 0, ptr, frame.Width * frame.Height);
@@ -375,12 +378,6 @@ namespace KinectJam
             return Math.Acos(dotProduct) * (180 / Math.PI);
         }
 
-        //private double GetAngleColor(ColorImagePoint shoulder, ColorImagePoint elbow, ColorImagePoint wrist)
-        //{
-        //    double dotProduct = DotProductColor(shoulder, elbow, wrist);
-        //    return Math.Acos(dotProduct) * (180 / Math.PI);
-        //}
-
         private double DotProduct(DepthImagePoint joint1, DepthImagePoint joint2, DepthImagePoint joint3)
         {
             Vector3 vectorA = new Vector3();
@@ -396,22 +393,6 @@ namespace KinectJam
             double magnitude = Magnitude(vectorA) * Magnitude(vectorB);
             return (u + v) / (Magnitude(vectorA) * Magnitude(vectorB));
         }
-
-        //private double DotProductColor(ColorImagePoint joint1, ColorImagePoint joint2, ColorImagePoint joint3)
-        //{
-        //    Vector3 vectorA = new Vector3();
-        //    vectorA.X = (joint1.X - joint2.X);
-        //    vectorA.Y = (joint1.Y - joint2.Y);
-        //    Vector3 vectorB = new Vector3();
-        //    vectorB.X = (joint2.X - joint3.X);
-        //    vectorB.Y = (joint2.Y - joint3.Y);
-
-        //    double u = vectorA.X * vectorB.X;
-        //    double v = vectorA.Y * vectorB.Y;
-        //    double total = u + v;
-        //    double magnitude = Magnitude(vectorA) * Magnitude(vectorB);
-        //    return (u + v) / (Magnitude(vectorA) * Magnitude(vectorB));
-        //}
         
         private double Distance(Joint final, Joint initial)
         {
@@ -636,6 +617,11 @@ namespace KinectJam
         private void AngleSlider_MouseDown(object sender, MouseEventArgs e)
         {
             sliderMouseDown = true;
+        }
+
+        private void PauseButton_Click(object sender, EventArgs e)
+        {
+            _paused = true;
         }
     }
 }

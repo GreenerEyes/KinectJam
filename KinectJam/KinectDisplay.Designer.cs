@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -53,6 +53,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.PauseButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -102,18 +103,18 @@
             // 
             // PowerGraph
             // 
-            chartArea4.Name = "ChartArea1";
-            this.PowerGraph.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.PowerGraph.Legends.Add(legend4);
+            chartArea2.Name = "ChartArea1";
+            this.PowerGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.PowerGraph.Legends.Add(legend2);
             this.PowerGraph.Location = new System.Drawing.Point(659, 29);
             this.PowerGraph.Name = "PowerGraph";
-            series4.BorderWidth = 5;
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series4.Legend = "Legend1";
-            series4.Name = "PowerData";
-            this.PowerGraph.Series.Add(series4);
+            series2.BorderWidth = 5;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series2.Legend = "Legend1";
+            series2.Name = "PowerData";
+            this.PowerGraph.Series.Add(series2);
             this.PowerGraph.Size = new System.Drawing.Size(555, 343);
             this.PowerGraph.TabIndex = 6;
             this.PowerGraph.Text = "chart1";
@@ -278,11 +279,23 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "(J/s)";
             // 
+            // PauseButton
+            // 
+            this.PauseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PauseButton.Location = new System.Drawing.Point(1095, 379);
+            this.PauseButton.Name = "PauseButton";
+            this.PauseButton.Size = new System.Drawing.Size(119, 31);
+            this.PauseButton.TabIndex = 23;
+            this.PauseButton.Text = "Pause";
+            this.PauseButton.UseVisualStyleBackColor = true;
+            this.PauseButton.Click += new System.EventHandler(this.PauseButton_Click);
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1242, 589);
+            this.Controls.Add(this.PauseButton);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -340,6 +353,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button PauseButton;
     }
 }
 
