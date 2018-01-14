@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -54,6 +54,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.PauseButton = new System.Windows.Forms.Button();
+            this.ContinueButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -78,7 +79,7 @@
             // DistanceWorkTextBox
             // 
             this.DistanceWorkTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DistanceWorkTextBox.Location = new System.Drawing.Point(862, 374);
+            this.DistanceWorkTextBox.Location = new System.Drawing.Point(862, 379);
             this.DistanceWorkTextBox.Name = "DistanceWorkTextBox";
             this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 203);
             this.DistanceWorkTextBox.TabIndex = 3;
@@ -103,18 +104,18 @@
             // 
             // PowerGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.PowerGraph.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.PowerGraph.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.PowerGraph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.PowerGraph.Legends.Add(legend1);
             this.PowerGraph.Location = new System.Drawing.Point(659, 29);
             this.PowerGraph.Name = "PowerGraph";
-            series2.BorderWidth = 5;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series2.Legend = "Legend1";
-            series2.Name = "PowerData";
-            this.PowerGraph.Series.Add(series2);
+            series1.BorderWidth = 5;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Legend = "Legend1";
+            series1.Name = "PowerData";
+            this.PowerGraph.Series.Add(series1);
             this.PowerGraph.Size = new System.Drawing.Size(555, 343);
             this.PowerGraph.TabIndex = 6;
             this.PowerGraph.Text = "chart1";
@@ -282,7 +283,7 @@
             // PauseButton
             // 
             this.PauseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PauseButton.Location = new System.Drawing.Point(1095, 379);
+            this.PauseButton.Location = new System.Drawing.Point(1108, 379);
             this.PauseButton.Name = "PauseButton";
             this.PauseButton.Size = new System.Drawing.Size(119, 31);
             this.PauseButton.TabIndex = 23;
@@ -290,11 +291,23 @@
             this.PauseButton.UseVisualStyleBackColor = true;
             this.PauseButton.Click += new System.EventHandler(this.PauseButton_Click);
             // 
+            // ContinueButton
+            // 
+            this.ContinueButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ContinueButton.Location = new System.Drawing.Point(1108, 416);
+            this.ContinueButton.Name = "ContinueButton";
+            this.ContinueButton.Size = new System.Drawing.Size(119, 31);
+            this.ContinueButton.TabIndex = 24;
+            this.ContinueButton.Text = "Continue";
+            this.ContinueButton.UseVisualStyleBackColor = true;
+            this.ContinueButton.Click += new System.EventHandler(this.ContinueButton_Click);
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1242, 589);
+            this.Controls.Add(this.ContinueButton);
             this.Controls.Add(this.PauseButton);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -354,6 +367,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button PauseButton;
+        private System.Windows.Forms.Button ContinueButton;
     }
 }
 

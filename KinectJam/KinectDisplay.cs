@@ -623,5 +623,10 @@ namespace KinectJam
         {
             _paused = true;
         }
+
+        private void ContinueButton_Click(object sender, EventArgs e)
+        {
+            _paused = false;
+        }
     }
 }
