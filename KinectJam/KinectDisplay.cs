@@ -41,13 +41,6 @@ namespace KinectJam
         private const double _clipBoundsThickness = 10;
         private const int _maxPowerSize = 1500;
 
-        //private readonly System.Windows.Media.Brush _centerPointBrush = System.Windows.Media.Brushes.Blue;
-        //private readonly System.Windows.Media.Brush _trackedJointBrush = System.Windows.Media.Brushes.Red;
-        //private readonly System.Windows.Media.Brush _inferredJointBrush = System.Windows.Media.Brushes.Yellow;
-
-        //private readonly System.Windows.Media.Pen _trackedBonePen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Green, 6);
-        //private readonly System.Windows.Media.Pen _inferredBonePen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Gray, 1);
-
         private Graphics _graphics;
         private Rectangle _rectangle = new Rectangle(340, 90, 190, 150);
         private Pen _penBlack = new Pen(Brushes.Black, 6);
@@ -80,6 +73,9 @@ namespace KinectJam
 
         private double[] timeArray = new double[50];
         private double[] workArray = new double[50];
+        private double[] goalArray = new double[50];
+
+        private double _goalLevel = 300;
 
         private bool sliderMouseDown = false;
         private bool sliderScrolling = false;
@@ -276,7 +272,7 @@ namespace KinectJam
                                         DistanceWorkTextBox.Text = stringBuilder.ToString();
                                     }
 
-                                    GraphingPower(_totalTime, Math.Round(filteredpower, 2));
+                                    GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
 
                                     _wristInitial = _wristFinal;
 
@@ -569,7 +565,7 @@ namespace KinectJam
 
         }
 
-        private void GraphingPower(double time, double powerValue)
+        private void GraphingPower(double time, double powerValue, double goalLevel)
         {
             if (PowerGraph.IsHandleCreated && _paused == false)
             {
@@ -578,10 +574,19 @@ namespace KinectJam
                 timeArray[timeArray.Length - 1] = Math.Round(time, 2);
                 Array.Copy(timeArray, 1, timeArray, 0, timeArray.Length - 1);
 
+                goalArray[goalArray.Length - 1] = goalLevel;
+                Array.Copy(goalArray, 1, goalArray, 0, goalArray.Length - 1);
+
                 PowerGraph.Series["PowerData"].Points.Clear();
                 for (int i = 0; i < workArray.Count() - 1; i++)
                 {
                     PowerGraph.Series["PowerData"].Points.AddXY(timeArray[i], workArray[i]);
+                }
+
+                PowerGraph.Series["GoalLevel"].Points.Clear();
+                for (int i = 0; i < goalArray.Count() - 1; i++)
+                {
+                    PowerGraph.Series["GoalLevel"].Points.AddXY(timeArray[i], goalArray[i]);
                 }
             }
         }
