@@ -262,11 +262,11 @@ namespace KinectJam
                                     //stringBuilder.AppendLine(string.Format("Force X: {0} (N)", Math.Round(forceX,2)));
                                     //stringBuilder.AppendLine(string.Format("Force Y: {0} (N)", Math.Round(forceY,2)));
 
-                                    stringBuilder.AppendLine(string.Format("Total Distance: {0} (m)", Math.Round(_totalDistance, 0)));
-                                    stringBuilder.AppendLine(string.Format("Total Work: {0} (J)", Math.Round(_totalWork, 0)));
-                                    stringBuilder.AppendLine(string.Format("Power: {0} (J/s)", Math.Round(power, 0)));
-                                    stringBuilder.AppendLine(string.Format("Filtered Work: {0} (J)", Math.Round(_totalFilteredWork, 0)));
-                                    stringBuilder.AppendLine(string.Format("Filtered Power: {0} (J/s)", Math.Round(filteredpower, 0)));
+                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalDistance, 0)));
+                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalWork, 0)));
+                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(power, 0)));
+                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalFilteredWork, 0)));
+                                    stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredpower, 0)));
 
                                     DistanceWorkTextBox.Text = string.Empty;
                                     DistanceWorkTextBox.Text = stringBuilder.ToString();
