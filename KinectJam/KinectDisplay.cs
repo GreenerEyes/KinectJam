@@ -571,7 +571,7 @@ namespace KinectJam
 
         private void GraphingPower(double time, double powerValue)
         {
-            if (PowerGraph.IsHandleCreated)
+            if (PowerGraph.IsHandleCreated && _paused == false)
             {
                 workArray[workArray.Length - 1] = powerValue;
                 Array.Copy(workArray, 1, workArray, 0, workArray.Length - 1);
