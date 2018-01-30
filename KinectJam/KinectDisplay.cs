@@ -13,6 +13,7 @@ using static KinectJam.Program;
 using Microsoft.Kinect.Toolkit.Fusion;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.IO;
 
 // Control+k+c to comment line
 // Control+k+u to uncomment line
@@ -81,6 +82,8 @@ namespace KinectJam
         private bool sliderScrolling = false;
 
         private bool _paused = false;
+
+        List<double> angleList = new List<double>();
 
 
         public KinectDisplay()
@@ -234,6 +237,8 @@ namespace KinectJam
                                     }
                                     StringBuilder stringBuilder = new StringBuilder();
 
+                                    
+                                    angleList.Add(angle);
 
                                     _wristFinal = skeleton.Joints[JointType.WristRight];
 
@@ -632,6 +637,22 @@ namespace KinectJam
         private void ContinueButton_Click(object sender, EventArgs e)
         {
             _paused = false;
+        }
+
+        private void RecordButton_Click(object sender, EventArgs e)
+        {
+            string folderName = @"C:\TestData";
+            System.IO.Directory.CreateDirectory(folderName);
+
+            string fileName = "TestFile.csv";
+            string pathString = System.IO.Path.Combine(folderName, fileName);
+            //string filePath = @"C:\Test.csv";
+
+            using (StreamWriter writer = new StreamWriter(pathString))
+                foreach (double item in angleList)
+                {
+                    writer.WriteLine(item);
+                }     
         }
     }
 }

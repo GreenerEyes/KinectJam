@@ -56,6 +56,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
+            this.RecordButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -310,11 +311,23 @@
             this.ContinueButton.UseVisualStyleBackColor = true;
             this.ContinueButton.Click += new System.EventHandler(this.ContinueButton_Click);
             // 
+            // RecordButton
+            // 
+            this.RecordButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RecordButton.Location = new System.Drawing.Point(1108, 513);
+            this.RecordButton.Name = "RecordButton";
+            this.RecordButton.Size = new System.Drawing.Size(119, 35);
+            this.RecordButton.TabIndex = 25;
+            this.RecordButton.Text = "Record";
+            this.RecordButton.UseVisualStyleBackColor = true;
+            this.RecordButton.Click += new System.EventHandler(this.RecordButton_Click);
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1242, 589);
+            this.Controls.Add(this.RecordButton);
             this.Controls.Add(this.ContinueButton);
             this.Controls.Add(this.PauseButton);
             this.Controls.Add(this.label5);
@@ -376,6 +389,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button PauseButton;
         private System.Windows.Forms.Button ContinueButton;
+        private System.Windows.Forms.Button RecordButton;
     }
 }
 
