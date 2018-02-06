@@ -60,6 +60,9 @@ namespace KinectJam
         private Joint _wristFinal = new Joint();
         private Joint _wristInitial = new Joint();
 
+        private Joint _elbowFinal = new Joint();
+        private Joint _elbowInitial = new Joint();
+
         private double _totalDistance = 0;
         private double _totalWork = 0;
         private double _totalFilteredWork = 0;
@@ -215,13 +218,11 @@ namespace KinectJam
                             using (_graphics = Graphics.FromImage(_bitmap))
                             {
                                 DepthImagePoint shoulder = GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]);
-                                //ColorImagePoint shoulder = GetColorPoint(skeleton.Joints[JointType.ShoulderRight]);
-
+                                
                                 Rectangle exerciseArea = new Rectangle(shoulder.X - 25, shoulder.Y - 110, 275, 220);
 
                                 double angle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
-                                //double angle = GetAngleColor(GetColorPoint(skeleton.Joints[JointType.ShoulderRight]), GetColorPoint(skeleton.Joints[JointType.ElbowRight]), GetColorPoint(skeleton.Joints[JointType.WristRight]));
-
+                                
                                 bool isInInitialPosition = angle >= 0 && angle <= 10;
                                 if (isInInitialPosition || _exerciseStarted)
                                 {
@@ -233,26 +234,34 @@ namespace KinectJam
 
                                         _wristFinal = _initialWristPoint;
                                         _wristInitial = _initialWristPoint;
+
+                                        _elbowFinal = _initialElbowPoint;
+                                        _elbowInitial = _initialElbowPoint;
+
                                         _exerciseStarted = true;
                                     }
-                                    StringBuilder stringBuilder = new StringBuilder();
 
+                                    StringBuilder stringBuilder = new StringBuilder();
                                     
                                     angleList.Add(angle);
 
                                     _wristFinal = skeleton.Joints[JointType.WristRight];
+                                    _elbowFinal = skeleton.Joints[JointType.ElbowRight];
 
-                                    double instantDistance = Distance(_wristFinal, _wristInitial);
+                                    double instantWristDistance = Distance(_wristFinal, _wristInitial);
+                                    double instantElbowDistance = Distance(_elbowFinal, _elbowInitial);
+
+                                    double instantDistance = instantWristDistance + instantElbowDistance;
+
                                     _totalDistance += instantDistance;
 
                                     _totalTime += (1.0 / 30.0);
 
-                                    double accelerationX = Accel(_wristFinal.Position.X, _wristInitial.Position.X);
-                                    double accelerationY = Accel(_wristFinal.Position.Y, _wristInitial.Position.Y);
-                                    double forceX = Force(accelerationX);
-                                    double forceY = Force(accelerationY, true);
+                                    double wristWork = JointWork(_wristFinal, _wristInitial, instantWristDistance);
+                                    double elbowWork = JointWork(_elbowFinal, _elbowInitial, instantElbowDistance);
 
-                                    double work = Work(TotalForce(forceX, forceY), instantDistance);
+                                    double work = wristWork + elbowWork;
+
                                     _totalWork += work;
                                     double power = Power(work);
 
@@ -280,6 +289,7 @@ namespace KinectJam
                                     GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
 
                                     _wristInitial = _wristFinal;
+                                    _elbowInitial = _elbowFinal;
 
                                     _previousFilteredWork = filteredwork;
 
@@ -429,6 +439,16 @@ namespace KinectJam
         private double Work(double totalForce, double distance)
         {
             return totalForce * distance;
+        }
+
+        private double JointWork(Joint _jointFinal, Joint _jointInitial, double instantJointDistance)
+        {
+            double accelerationX = Accel(_jointFinal.Position.X, _jointInitial.Position.X);
+            double accelerationY = Accel(_jointFinal.Position.Y, _jointInitial.Position.Y);
+            double forceX = Force(accelerationX);
+            double forceY = Force(accelerationY, true);
+
+            return Work(TotalForce(forceX, forceY), instantJointDistance);
         }
 
         private double FilteredWork(double alpha, double previousFilteredWork, double work)
