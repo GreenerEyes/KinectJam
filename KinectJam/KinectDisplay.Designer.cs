@@ -32,6 +32,10 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -57,16 +61,18 @@
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
             this.RecordButton = new System.Windows.Forms.Button();
+            this.AngleGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AngleGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // rtbMessages
             // 
-            this.rtbMessages.Location = new System.Drawing.Point(12, 498);
+            this.rtbMessages.Location = new System.Drawing.Point(12, 453);
             this.rtbMessages.Name = "rtbMessages";
-            this.rtbMessages.Size = new System.Drawing.Size(264, 83);
+            this.rtbMessages.Size = new System.Drawing.Size(264, 50);
             this.rtbMessages.TabIndex = 0;
             this.rtbMessages.Text = "";
             // 
@@ -74,7 +80,7 @@
             // 
             this.video.Location = new System.Drawing.Point(12, 12);
             this.video.Name = "video";
-            this.video.Size = new System.Drawing.Size(640, 480);
+            this.video.Size = new System.Drawing.Size(529, 429);
             this.video.TabIndex = 1;
             this.video.TabStop = false;
             // 
@@ -90,7 +96,7 @@
             // weightLabel
             // 
             this.weightLabel.AutoSize = true;
-            this.weightLabel.Location = new System.Drawing.Point(658, 12);
+            this.weightLabel.Location = new System.Drawing.Point(547, 12);
             this.weightLabel.Name = "weightLabel";
             this.weightLabel.Size = new System.Drawing.Size(86, 13);
             this.weightLabel.TabIndex = 4;
@@ -99,7 +105,7 @@
             // 
             // heldWeightTextbox
             // 
-            this.heldWeightTextbox.Location = new System.Drawing.Point(750, 9);
+            this.heldWeightTextbox.Location = new System.Drawing.Point(639, 9);
             this.heldWeightTextbox.Name = "heldWeightTextbox";
             this.heldWeightTextbox.Size = new System.Drawing.Size(183, 20);
             this.heldWeightTextbox.TabIndex = 5;
@@ -110,7 +116,7 @@
             this.PowerGraph.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.PowerGraph.Legends.Add(legend1);
-            this.PowerGraph.Location = new System.Drawing.Point(659, 29);
+            this.PowerGraph.Location = new System.Drawing.Point(547, 56);
             this.PowerGraph.Name = "PowerGraph";
             series1.BorderWidth = 5;
             series1.ChartArea = "ChartArea1";
@@ -125,13 +131,13 @@
             series2.Name = "GoalLevel";
             this.PowerGraph.Series.Add(series1);
             this.PowerGraph.Series.Add(series2);
-            this.PowerGraph.Size = new System.Drawing.Size(555, 343);
+            this.PowerGraph.Size = new System.Drawing.Size(386, 317);
             this.PowerGraph.TabIndex = 6;
             this.PowerGraph.Text = "chart1";
             // 
             // IncreaseAngleButton
             // 
-            this.IncreaseAngleButton.Location = new System.Drawing.Point(553, 498);
+            this.IncreaseAngleButton.Location = new System.Drawing.Point(282, 495);
             this.IncreaseAngleButton.Name = "IncreaseAngleButton";
             this.IncreaseAngleButton.Size = new System.Drawing.Size(99, 23);
             this.IncreaseAngleButton.TabIndex = 7;
@@ -141,7 +147,7 @@
             // 
             // DecreaseAngleButton
             // 
-            this.DecreaseAngleButton.Location = new System.Drawing.Point(553, 554);
+            this.DecreaseAngleButton.Location = new System.Drawing.Point(281, 551);
             this.DecreaseAngleButton.Name = "DecreaseAngleButton";
             this.DecreaseAngleButton.Size = new System.Drawing.Size(99, 23);
             this.DecreaseAngleButton.TabIndex = 8;
@@ -151,7 +157,7 @@
             // 
             // CurrentAngleTextbox
             // 
-            this.CurrentAngleTextbox.Location = new System.Drawing.Point(553, 528);
+            this.CurrentAngleTextbox.Location = new System.Drawing.Point(281, 524);
             this.CurrentAngleTextbox.Name = "CurrentAngleTextbox";
             this.CurrentAngleTextbox.Size = new System.Drawing.Size(100, 20);
             this.CurrentAngleTextbox.TabIndex = 9;
@@ -159,11 +165,11 @@
             // AngleSlider
             // 
             this.AngleSlider.LargeChange = 0;
-            this.AngleSlider.Location = new System.Drawing.Point(311, 532);
+            this.AngleSlider.Location = new System.Drawing.Point(12, 513);
             this.AngleSlider.Maximum = 24;
             this.AngleSlider.Minimum = -24;
             this.AngleSlider.Name = "AngleSlider";
-            this.AngleSlider.Size = new System.Drawing.Size(212, 45);
+            this.AngleSlider.Size = new System.Drawing.Size(264, 45);
             this.AngleSlider.SmallChange = 0;
             this.AngleSlider.TabIndex = 10;
             this.AngleSlider.TickFrequency = 2;
@@ -174,7 +180,7 @@
             // MinAngleLabel
             // 
             this.MinAngleLabel.AutoSize = true;
-            this.MinAngleLabel.Location = new System.Drawing.Point(308, 564);
+            this.MinAngleLabel.Location = new System.Drawing.Point(9, 561);
             this.MinAngleLabel.Name = "MinAngleLabel";
             this.MinAngleLabel.Size = new System.Drawing.Size(22, 13);
             this.MinAngleLabel.TabIndex = 11;
@@ -183,7 +189,7 @@
             // MaxAngleLabel
             // 
             this.MaxAngleLabel.AutoSize = true;
-            this.MaxAngleLabel.Location = new System.Drawing.Point(501, 564);
+            this.MaxAngleLabel.Location = new System.Drawing.Point(251, 561);
             this.MaxAngleLabel.Name = "MaxAngleLabel";
             this.MaxAngleLabel.Size = new System.Drawing.Size(25, 13);
             this.MaxAngleLabel.TabIndex = 12;
@@ -322,11 +328,36 @@
             this.RecordButton.UseVisualStyleBackColor = true;
             this.RecordButton.Click += new System.EventHandler(this.RecordButton_Click);
             // 
+            // AngleGraph
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.AngleGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.AngleGraph.Legends.Add(legend2);
+            this.AngleGraph.Location = new System.Drawing.Point(939, 56);
+            this.AngleGraph.Name = "AngleGraph";
+            series3.BorderWidth = 5;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series3.Legend = "Legend1";
+            series3.Name = "AngleG";
+            series4.BorderWidth = 5;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.Legend = "Legend1";
+            series4.Name = "FilteredAG";
+            this.AngleGraph.Series.Add(series3);
+            this.AngleGraph.Series.Add(series4);
+            this.AngleGraph.Size = new System.Drawing.Size(386, 317);
+            this.AngleGraph.TabIndex = 26;
+            this.AngleGraph.Text = "chart1";
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1242, 589);
+            this.ClientSize = new System.Drawing.Size(1331, 593);
+            this.Controls.Add(this.AngleGraph);
             this.Controls.Add(this.RecordButton);
             this.Controls.Add(this.ContinueButton);
             this.Controls.Add(this.PauseButton);
@@ -358,6 +389,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.video)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AngleGraph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -390,6 +422,7 @@
         private System.Windows.Forms.Button PauseButton;
         private System.Windows.Forms.Button ContinueButton;
         private System.Windows.Forms.Button RecordButton;
+        private System.Windows.Forms.DataVisualization.Charting.Chart AngleGraph;
     }
 }
 

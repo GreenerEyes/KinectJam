@@ -41,6 +41,7 @@ namespace KinectJam
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
         private const int _maxPowerSize = 1500;
+        private const int _maxAngleSize = 180;
 
         private Graphics _graphics;
         private Rectangle _rectangle = new Rectangle(340, 90, 190, 150);
@@ -74,10 +75,15 @@ namespace KinectJam
 
         private double _alpha = 0.98;
         private double _previousFilteredWork = 0;
+        private double _previousFilteredAngle = 0;
+        private double _previousAngle = 0;
 
         private double[] timeArray = new double[50];
         private double[] workArray = new double[50];
         private double[] goalArray = new double[50];
+
+        private double[] angleArray = new double[50];
+        private double[] filteredAngleArray = new double[50];
 
         private double _goalLevel = 300;
 
@@ -87,7 +93,9 @@ namespace KinectJam
         private bool _paused = false;
 
         List<double> angleList = new List<double>();
-
+        List<double> crossList = new List<double>();
+        List<double> timeScale = new List<double>();
+        List<double> amplitudeOfCrossList = new List<double>();
 
         public KinectDisplay()
         {
@@ -96,6 +104,8 @@ namespace KinectJam
             //timeArray.Add(initialTime);
             for (int i = 0; i < 50; i++)
             {
+                angleArray[i] = 0;
+
                 workArray[i] = 0;
                 if (i == 49)
                     timeArray[i] = 0;
@@ -105,6 +115,9 @@ namespace KinectJam
 
             PowerGraph.ChartAreas[0].AxisY.Maximum = _maxPowerSize;
             PowerGraph.ChartAreas[0].AxisY.Minimum = 0;
+
+            AngleGraph.ChartAreas[0].AxisY.Maximum = _maxAngleSize;
+            AngleGraph.ChartAreas[0].AxisY.Minimum = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -257,6 +270,8 @@ namespace KinectJam
 
                                     _totalTime += (1.0 / 30.0);
 
+                                    timeScale.Add(_totalTime);
+
                                     double wristWork = JointWork(_wristFinal, _wristInitial, instantWristDistance);
                                     double elbowWork = JointWork(_elbowFinal, _elbowInitial, instantElbowDistance);
 
@@ -268,6 +283,8 @@ namespace KinectJam
                                     double filteredwork = FilteredWork(_alpha, _previousFilteredWork, work);
                                     _totalFilteredWork += filteredwork;
                                     double filteredpower = Power(filteredwork);
+
+                                    double filteredangle = FilteredWork(_alpha, _previousFilteredAngle, angle);
 
                                     if (_paused == false)
                                     {
@@ -286,12 +303,22 @@ namespace KinectJam
                                         DistanceWorkTextBox.Text = stringBuilder.ToString();
                                     }
 
+                                    if (_previousAngle > _previousFilteredAngle + 2 && angle < filteredangle - 2)
+                                    {
+                                        crossList.Add(_totalTime);
+                                        amplitudeOfCrossList.Add(angle);
+                                    }
+
                                     GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
+                                    GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle);
 
                                     _wristInitial = _wristFinal;
                                     _elbowInitial = _elbowFinal;
 
                                     _previousFilteredWork = filteredwork;
+                                    _previousFilteredAngle = filteredangle;
+
+                                    _previousAngle = angle;
 
                                     if (_exerciseStarted && (angle >= 80 && angle <= 100))
                                         _graphics.DrawRectangle(_penBlue, exerciseArea);
@@ -616,6 +643,32 @@ namespace KinectJam
             }
         }
 
+        private void GraphingAngle(double time, double angleValue, double filteredValue)
+        {
+            if (AngleGraph.IsHandleCreated && _paused == false)
+            {
+                angleArray[angleArray.Length - 1] = angleValue;
+                Array.Copy(angleArray, 1, angleArray, 0, angleArray.Length - 1);
+                timeArray[timeArray.Length - 1] = Math.Round(time, 2);
+                Array.Copy(timeArray, 1, timeArray, 0, timeArray.Length - 1);
+
+                filteredAngleArray[filteredAngleArray.Length - 1] = filteredValue;
+                Array.Copy(filteredAngleArray, 1, filteredAngleArray, 0, filteredAngleArray.Length - 1);
+
+                AngleGraph.Series["AngleG"].Points.Clear();
+                for (int i = 0; i < angleArray.Count() - 1; i++)
+                {
+                    AngleGraph.Series["AngleG"].Points.AddXY(timeArray[i], angleArray[i]);
+                }
+
+                AngleGraph.Series["FilteredAG"].Points.Clear();
+                for (int i = 0; i < filteredAngleArray.Count() - 1; i++)
+                {
+                    AngleGraph.Series["FilteredAG"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+                }
+            }
+        }
+
         private void IncreaseAngleButton_Click(object sender, EventArgs e)
         {
             _sensor.ElevationAngle++;
@@ -664,15 +717,28 @@ namespace KinectJam
             string folderName = @"C:\TestData";
             System.IO.Directory.CreateDirectory(folderName);
 
-            string fileName = "TestFile.csv";
-            string pathString = System.IO.Path.Combine(folderName, fileName);
+            string fileNameAngle = "TestFile.csv";
+            string pathString = System.IO.Path.Combine(folderName, fileNameAngle);
             //string filePath = @"C:\Test.csv";
 
+            var angleAndTime = angleList.Zip(timeScale, (a, t) => new { Angle = a, Time = t });
+
             using (StreamWriter writer = new StreamWriter(pathString))
-                foreach (double item in angleList)
+                foreach (var at in angleAndTime)
                 {
-                    writer.WriteLine(item);
-                }     
+                    writer.WriteLine(at.Time + "," + at.Angle);
+                }
+
+            string fileNameTime = "TestFileTime.csv";
+            string secondPathString = System.IO.Path.Combine(folderName, fileNameTime);
+
+            var crossPoint = crossList.Zip(amplitudeOfCrossList, (ct, ca) => new { crossTime = ct, crossAmplitude = ca });
+
+            using (StreamWriter timewriter = new StreamWriter(secondPathString))
+                foreach (var ctca in crossPoint)
+                {
+                    timewriter.WriteLine(ctca.crossTime + "," + ctca.crossAmplitude);
+                }
         }
     }
 }
