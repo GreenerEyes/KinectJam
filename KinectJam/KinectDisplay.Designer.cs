@@ -62,6 +62,9 @@
             this.ContinueButton = new System.Windows.Forms.Button();
             this.RecordButton = new System.Windows.Forms.Button();
             this.AngleGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.FilteredFrequencyTextBox = new System.Windows.Forms.RichTextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -89,7 +92,7 @@
             this.DistanceWorkTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DistanceWorkTextBox.Location = new System.Drawing.Point(862, 379);
             this.DistanceWorkTextBox.Name = "DistanceWorkTextBox";
-            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 203);
+            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 155);
             this.DistanceWorkTextBox.TabIndex = 3;
             this.DistanceWorkTextBox.Text = "";
             // 
@@ -352,11 +355,43 @@
             this.AngleGraph.TabIndex = 26;
             this.AngleGraph.Text = "chart1";
             // 
+            // FilteredFrequencyTextBox
+            // 
+            this.FilteredFrequencyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FilteredFrequencyTextBox.Location = new System.Drawing.Point(862, 538);
+            this.FilteredFrequencyTextBox.Name = "FilteredFrequencyTextBox";
+            this.FilteredFrequencyTextBox.Size = new System.Drawing.Size(166, 41);
+            this.FilteredFrequencyTextBox.TabIndex = 27;
+            this.FilteredFrequencyTextBox.Text = "";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(607, 538);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(249, 31);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Filtered Frequency:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(1034, 538);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(66, 31);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "(Hz)";
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1331, 593);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.FilteredFrequencyTextBox);
             this.Controls.Add(this.AngleGraph);
             this.Controls.Add(this.RecordButton);
             this.Controls.Add(this.ContinueButton);
@@ -423,6 +458,9 @@
         private System.Windows.Forms.Button ContinueButton;
         private System.Windows.Forms.Button RecordButton;
         private System.Windows.Forms.DataVisualization.Charting.Chart AngleGraph;
+        private System.Windows.Forms.RichTextBox FilteredFrequencyTextBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }
 

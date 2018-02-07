@@ -74,6 +74,7 @@ namespace KinectJam
         public int frame = 0;
 
         private double _alpha = 0.98;
+        private double _alphaFrequency = 0.98;
         private double _previousFilteredWork = 0;
         private double _previousFilteredAngle = 0;
         private double _previousAngle = 0;
@@ -96,6 +97,13 @@ namespace KinectJam
         List<double> crossList = new List<double>();
         List<double> timeScale = new List<double>();
         List<double> amplitudeOfCrossList = new List<double>();
+        List<double> frequencyList = new List<double>();
+        List<double> filteredFrequencyList = new List<double>();
+
+        private double _initialCrossPoint = 0;
+        private double _finalCrossPoint = 0;
+        private double _filteredFrequency = 0;
+        private double _previouslyFilteredFrequency = 0;
 
         public KinectDisplay()
         {
@@ -280,11 +288,11 @@ namespace KinectJam
                                     _totalWork += work;
                                     double power = Power(work);
 
-                                    double filteredwork = FilteredWork(_alpha, _previousFilteredWork, work);
+                                    double filteredwork = Filter(_alpha, _previousFilteredWork, work);
                                     _totalFilteredWork += filteredwork;
                                     double filteredpower = Power(filteredwork);
 
-                                    double filteredangle = FilteredWork(_alpha, _previousFilteredAngle, angle);
+                                    double filteredangle = Filter(_alpha, _previousFilteredAngle, angle);
 
                                     if (_paused == false)
                                     {
@@ -303,10 +311,26 @@ namespace KinectJam
                                         DistanceWorkTextBox.Text = stringBuilder.ToString();
                                     }
 
-                                    if (_previousAngle > _previousFilteredAngle + 2 && angle < filteredangle - 2)
+                                    if (_previousAngle > _previousFilteredAngle + 0.5 && angle < filteredangle - 0.5)
                                     {
+                                        _finalCrossPoint = _totalTime;
                                         crossList.Add(_totalTime);
                                         amplitudeOfCrossList.Add(angle);
+                                        double _crossDifference = _finalCrossPoint - _initialCrossPoint;
+                                        double _instantFrequency = 1.0 / (_crossDifference);
+                                        frequencyList.Add(_instantFrequency);
+                                        
+                                        _filteredFrequency = Filter(_alphaFrequency, _previouslyFilteredFrequency, _instantFrequency);
+                                        filteredFrequencyList.Add(_filteredFrequency);
+
+                                        StringBuilder stringBuilderFrequency = new StringBuilder();
+
+                                        stringBuilderFrequency.AppendLine(string.Format("{0}", Math.Round(_filteredFrequency, 3)));
+                                        FilteredFrequencyTextBox.Text = string.Empty;
+                                        FilteredFrequencyTextBox.Text = stringBuilderFrequency.ToString();
+
+                                        _previouslyFilteredFrequency = _filteredFrequency;
+                                        _initialCrossPoint = _finalCrossPoint;
                                     }
 
                                     GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
@@ -478,10 +502,10 @@ namespace KinectJam
             return Work(TotalForce(forceX, forceY), instantJointDistance);
         }
 
-        private double FilteredWork(double alpha, double previousFilteredWork, double work)
+        private double Filter(double alpha, double previousFilter, double filter)
         {
             // y(n) = alpha*y(n-1) + (1-alpha)*x(n)
-            return alpha *previousFilteredWork + (1.0 - alpha) * work;
+            return alpha *previousFilter + (1.0 - alpha) * filter;
         }
 
         private double Power(double work)
@@ -722,23 +746,35 @@ namespace KinectJam
             //string filePath = @"C:\Test.csv";
 
             var angleAndTime = angleList.Zip(timeScale, (a, t) => new { Angle = a, Time = t });
+           
+            //var angleWithCross = angleAndTime.Zip(crossPoint, (s, c) => new { Signal = s, Cross = c });
 
             using (StreamWriter writer = new StreamWriter(pathString))
-                foreach (var at in angleAndTime)
+                foreach (var value in angleAndTime)
                 {
-                    writer.WriteLine(at.Time + "," + at.Angle);
+                    writer.WriteLine(value.Time + "," + value.Angle);
                 }
 
-            string fileNameTime = "TestFileTime.csv";
+            string fileNameTime = "TestFileFrequency.csv";
             string secondPathString = System.IO.Path.Combine(folderName, fileNameTime);
-
             var crossPoint = crossList.Zip(amplitudeOfCrossList, (ct, ca) => new { crossTime = ct, crossAmplitude = ca });
+            var frequencies = frequencyList.Zip(filteredFrequencyList, (f, ff) => new { IFrequency = f, FFrequency = ff });
+            var armFrequency = crossPoint.Zip(frequencies, (lpf, f) => new { LowPassFilter = lpf, Frequency = f });
 
             using (StreamWriter timewriter = new StreamWriter(secondPathString))
-                foreach (var ctca in crossPoint)
+                foreach (var item in armFrequency)
                 {
-                    timewriter.WriteLine(ctca.crossTime + "," + ctca.crossAmplitude);
+                    timewriter.WriteLine(item.LowPassFilter.crossTime + "," + item.LowPassFilter.crossAmplitude + "," + item.Frequency.IFrequency + "," + item.Frequency.FFrequency);
                 }
+
+            //string fileNameFrequency = "TestFileFrequency.csv";
+            //string thirdPathString = System.IO.Path.Combine(folderName, fileNameFrequency);
+
+            //using (StreamWriter freqwriter = new StreamWriter(thirdPathString))
+            //    foreach (var item in frequencyList)
+            //    {
+            //        freqwriter.WriteLine(item);
+            //    }
         }
     }
 }
