@@ -64,6 +64,14 @@ namespace KinectJam
         private Joint _elbowFinal = new Joint();
         private Joint _elbowInitial = new Joint();
 
+        private Joint _initialShoulderPointLeft = new Joint();
+        private Joint _initialElbowPointLeft = new Joint();
+        private Joint _initialWristPointLeft = new Joint();
+        private Joint _wristFinalLeft = new Joint();
+        private Joint _wristInitialLeft = new Joint();
+        private Joint _elbowFinalLeft = new Joint();
+        private Joint _elbowInitialLeft = new Joint();
+
         private double _totalDistance = 0;
         private double _totalWork = 0;
         private double _totalFilteredWork = 0;
@@ -85,6 +93,7 @@ namespace KinectJam
 
         private double[] angleArray = new double[50];
         private double[] filteredAngleArray = new double[50];
+        private double[] angleArrayLeft = new double[50];
 
         private double _goalLevel = 300;
 
@@ -244,6 +253,7 @@ namespace KinectJam
 
                                 double elbowAngle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
                                 double angle = 180.0 - GetAngle(GetDepthPoint(skeleton.Joints[JointType.Spine]), GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]));
+                                double angleLeft = 180.0 - GetAngle(GetDepthPoint(skeleton.Joints[JointType.Spine]), GetDepthPoint(skeleton.Joints[JointType.ShoulderLeft]), GetDepthPoint(skeleton.Joints[JointType.ElbowLeft]));
 
                                 bool isInInitialPosition = elbowAngle >= 0 && elbowAngle <= 10;
                                 if (isInInitialPosition || _exerciseStarted)
@@ -254,11 +264,21 @@ namespace KinectJam
                                         _initialElbowPoint = skeleton.Joints[JointType.ElbowRight];
                                         _initialWristPoint = skeleton.Joints[JointType.WristRight];
 
+                                        _initialShoulderPointLeft = skeleton.Joints[JointType.ShoulderLeft];
+                                        _initialElbowPointLeft = skeleton.Joints[JointType.ElbowLeft];
+                                        _initialWristPointLeft = skeleton.Joints[JointType.WristLeft];
+
                                         _wristFinal = _initialWristPoint;
                                         _wristInitial = _initialWristPoint;
 
+                                        _wristFinalLeft = _initialWristPointLeft;
+                                        _wristInitialLeft = _initialWristPointLeft;
+
                                         _elbowFinal = _initialElbowPoint;
                                         _elbowInitial = _initialElbowPoint;
+
+                                        _elbowFinalLeft = _initialElbowPointLeft;
+                                        _elbowInitialLeft = _initialElbowPointLeft;
 
                                         _exerciseStarted = true;
                                     }
@@ -270,11 +290,20 @@ namespace KinectJam
                                     _wristFinal = skeleton.Joints[JointType.WristRight];
                                     _elbowFinal = skeleton.Joints[JointType.ElbowRight];
 
+                                    _wristFinalLeft = skeleton.Joints[JointType.WristLeft];
+                                    _elbowFinalLeft = skeleton.Joints[JointType.ElbowLeft];
+
                                     double instantWristDistance = Distance(_wristFinal, _wristInitial);
                                     double instantElbowDistance = Distance(_elbowFinal, _elbowInitial);
 
                                     double instantDistance = instantWristDistance + instantElbowDistance;
 
+                                    double instantWristDistanceLeft = Distance(_wristFinalLeft, _wristInitialLeft);
+                                    double instantElbowDistanceLeft = Distance(_elbowFinalLeft, _elbowInitialLeft);
+
+                                    double instantDistanceLeft = instantWristDistanceLeft + instantElbowDistanceLeft;
+
+                                    // Only takes into account right wrist
                                     _totalDistance += instantDistance;
 
                                     _totalTime += (1.0 / 30.0);
@@ -284,16 +313,23 @@ namespace KinectJam
                                     double wristWork = JointWork(_wristFinal, _wristInitial, instantWristDistance);
                                     double elbowWork = JointWork(_elbowFinal, _elbowInitial, instantElbowDistance);
 
+                                    double wristWorkLeft = JointWork(_wristFinalLeft, _wristInitialLeft, instantWristDistanceLeft);
+                                    double elbowWorkLeft = JointWork(_elbowFinalLeft, _elbowInitialLeft, instantElbowDistanceLeft);
+
                                     double work = wristWork + elbowWork;
+                                    double workLeft = wristWorkLeft + elbowWorkLeft;
 
-                                    _totalWork += work;
-                                    double power = Power(work);
+                                    double instantWork = work + workLeft;
 
-                                    double filteredwork = Filter(_alpha, _previousFilteredWork, work);
+                                    _totalWork += instantWork;
+                                    double power = Power(instantWork);
+
+                                    double filteredwork = Filter(_alpha, _previousFilteredWork, instantWork);
                                     _totalFilteredWork += filteredwork;
                                     double filteredpower = Power(filteredwork);
 
                                     double filteredangle = Filter(_alpha, _previousFilteredAngle, angle);
+
 
                                     if (_paused == false)
                                     {
@@ -335,10 +371,13 @@ namespace KinectJam
                                     }
 
                                     GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
-                                    GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle);
+                                    GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
 
                                     _wristInitial = _wristFinal;
                                     _elbowInitial = _elbowFinal;
+
+                                    _wristInitialLeft = _wristFinalLeft;
+                                    _elbowInitialLeft = _elbowFinalLeft;
 
                                     _previousFilteredWork = filteredwork;
                                     _previousFilteredAngle = filteredangle;
@@ -668,7 +707,7 @@ namespace KinectJam
             }
         }
 
-        private void GraphingAngle(double time, double angleValue, double filteredValue)
+        private void GraphingAngle(double time, double angleValue, double filteredValue, double angleValueLeft)
         {
             if (AngleGraph.IsHandleCreated && _paused == false)
             {
@@ -680,16 +719,25 @@ namespace KinectJam
                 filteredAngleArray[filteredAngleArray.Length - 1] = filteredValue;
                 Array.Copy(filteredAngleArray, 1, filteredAngleArray, 0, filteredAngleArray.Length - 1);
 
-                AngleGraph.Series["AngleG"].Points.Clear();
+                angleArrayLeft[angleArrayLeft.Length - 1] = angleValueLeft;
+                Array.Copy(angleArrayLeft, 1, angleArrayLeft, 0, angleArrayLeft.Length - 1);
+
+                AngleGraph.Series["AngleR"].Points.Clear();
                 for (int i = 0; i < angleArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["AngleG"].Points.AddXY(timeArray[i], angleArray[i]);
+                    AngleGraph.Series["AngleR"].Points.AddXY(timeArray[i], angleArray[i]);
                 }
 
-                AngleGraph.Series["FilteredAG"].Points.Clear();
+                AngleGraph.Series["FilteredAR"].Points.Clear();
                 for (int i = 0; i < filteredAngleArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["FilteredAG"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+                    AngleGraph.Series["FilteredAR"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+                }
+
+                AngleGraph.Series["AngleLeft"].Points.Clear();
+                for (int i = 0; i < angleArrayLeft.Count() - 1; i++)
+                {
+                    AngleGraph.Series["AngleLeft"].Points.AddXY(timeArray[i], angleArrayLeft[i]);
                 }
             }
         }
