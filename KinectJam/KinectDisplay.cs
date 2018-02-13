@@ -242,9 +242,10 @@ namespace KinectJam
                                 
                                 Rectangle exerciseArea = new Rectangle(shoulder.X - 25, shoulder.Y - 110, 275, 220);
 
-                                double angle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
-                                
-                                bool isInInitialPosition = angle >= 0 && angle <= 10;
+                                double elbowAngle = GetAngle(GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]), GetDepthPoint(skeleton.Joints[JointType.WristRight]));
+                                double angle = 180.0 - GetAngle(GetDepthPoint(skeleton.Joints[JointType.Spine]), GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]));
+
+                                bool isInInitialPosition = elbowAngle >= 0 && elbowAngle <= 10;
                                 if (isInInitialPosition || _exerciseStarted)
                                 {
                                     if (isInInitialPosition && !_exerciseStarted)
@@ -344,7 +345,7 @@ namespace KinectJam
 
                                     _previousAngle = angle;
 
-                                    if (_exerciseStarted && (angle >= 80 && angle <= 100))
+                                    if (_exerciseStarted && (elbowAngle >= 80 && elbowAngle <= 100))
                                         _graphics.DrawRectangle(_penBlue, exerciseArea);
                                     else
                                         _graphics.DrawRectangle(_penGreen, exerciseArea);
