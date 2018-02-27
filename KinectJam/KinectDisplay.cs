@@ -99,7 +99,7 @@ namespace KinectJam
         public int frame = 0;
 
         private double _alpha = 0.98;
-        private double _alphaFrequency = 0.25;
+        private double _alphaFrequency = 0.50;
         private double _previousFilteredWork = 0;
         private double _previousFilteredAngle = 0;
         private double _previousAngle = 0;
