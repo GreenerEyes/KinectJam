@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series19 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series20 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -69,12 +69,12 @@
             this.bodyWeightTextbox = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.armLengthTextbox = new System.Windows.Forms.TextBox();
             this.TestTextBox = new System.Windows.Forms.RichTextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -120,30 +120,30 @@
             // 
             this.heldWeightTextbox.Location = new System.Drawing.Point(639, 12);
             this.heldWeightTextbox.Name = "heldWeightTextbox";
-            this.heldWeightTextbox.Size = new System.Drawing.Size(119, 20);
+            this.heldWeightTextbox.Size = new System.Drawing.Size(120, 20);
             this.heldWeightTextbox.TabIndex = 5;
             // 
             // PowerGraph
             // 
-            chartArea7.Name = "ChartArea1";
-            this.PowerGraph.ChartAreas.Add(chartArea7);
-            legend7.Name = "Legend1";
-            this.PowerGraph.Legends.Add(legend7);
+            chartArea5.Name = "ChartArea1";
+            this.PowerGraph.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.PowerGraph.Legends.Add(legend5);
             this.PowerGraph.Location = new System.Drawing.Point(547, 56);
             this.PowerGraph.Name = "PowerGraph";
-            series16.BorderWidth = 5;
-            series16.ChartArea = "ChartArea1";
-            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series16.Legend = "Legend1";
-            series16.Name = "PowerData";
-            series17.BorderWidth = 5;
-            series17.ChartArea = "ChartArea1";
-            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series17.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series17.Legend = "Legend1";
-            series17.Name = "GoalLevel";
-            this.PowerGraph.Series.Add(series16);
-            this.PowerGraph.Series.Add(series17);
+            series11.BorderWidth = 5;
+            series11.ChartArea = "ChartArea1";
+            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series11.Legend = "Legend1";
+            series11.Name = "PowerData";
+            series12.BorderWidth = 5;
+            series12.ChartArea = "ChartArea1";
+            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series12.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series12.Legend = "Legend1";
+            series12.Name = "GoalLevel";
+            this.PowerGraph.Series.Add(series11);
+            this.PowerGraph.Series.Add(series12);
             this.PowerGraph.Size = new System.Drawing.Size(386, 317);
             this.PowerGraph.TabIndex = 6;
             this.PowerGraph.Text = "chart1";
@@ -329,7 +329,7 @@
             // RecordButton
             // 
             this.RecordButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RecordButton.Location = new System.Drawing.Point(1206, 513);
+            this.RecordButton.Location = new System.Drawing.Point(1206, 486);
             this.RecordButton.Name = "RecordButton";
             this.RecordButton.Size = new System.Drawing.Size(119, 35);
             this.RecordButton.TabIndex = 25;
@@ -339,30 +339,30 @@
             // 
             // AngleGraph
             // 
-            chartArea8.Name = "ChartArea1";
-            this.AngleGraph.ChartAreas.Add(chartArea8);
-            legend8.Name = "Legend1";
-            this.AngleGraph.Legends.Add(legend8);
+            chartArea6.Name = "ChartArea1";
+            this.AngleGraph.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.AngleGraph.Legends.Add(legend6);
             this.AngleGraph.Location = new System.Drawing.Point(939, 56);
             this.AngleGraph.Name = "AngleGraph";
-            series18.BorderWidth = 5;
-            series18.ChartArea = "ChartArea1";
-            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series18.Legend = "Legend1";
-            series18.Name = "AngleR";
-            series19.BorderWidth = 5;
-            series19.ChartArea = "ChartArea1";
-            series19.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series19.Legend = "Legend1";
-            series19.Name = "FilteredAR";
-            series20.BorderWidth = 5;
-            series20.ChartArea = "ChartArea1";
-            series20.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series20.Legend = "Legend1";
-            series20.Name = "AngleLeft";
-            this.AngleGraph.Series.Add(series18);
-            this.AngleGraph.Series.Add(series19);
-            this.AngleGraph.Series.Add(series20);
+            series13.BorderWidth = 5;
+            series13.ChartArea = "ChartArea1";
+            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series13.Legend = "Legend1";
+            series13.Name = "AngleR";
+            series14.BorderWidth = 5;
+            series14.ChartArea = "ChartArea1";
+            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series14.Legend = "Legend1";
+            series14.Name = "FilteredAR";
+            series15.BorderWidth = 5;
+            series15.ChartArea = "ChartArea1";
+            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series15.Legend = "Legend1";
+            series15.Name = "AngleLeft";
+            this.AngleGraph.Series.Add(series13);
+            this.AngleGraph.Series.Add(series14);
+            this.AngleGraph.Series.Add(series15);
             this.AngleGraph.Size = new System.Drawing.Size(386, 317);
             this.AngleGraph.TabIndex = 26;
             this.AngleGraph.Text = "chart1";
@@ -400,7 +400,7 @@
             // 
             this.bodyWeightTextbox.Location = new System.Drawing.Point(862, 12);
             this.bodyWeightTextbox.Name = "bodyWeightTextbox";
-            this.bodyWeightTextbox.Size = new System.Drawing.Size(147, 20);
+            this.bodyWeightTextbox.Size = new System.Drawing.Size(120, 20);
             this.bodyWeightTextbox.TabIndex = 30;
             // 
             // label8
@@ -417,23 +417,15 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(1037, 15);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(104, 13);
+            this.label9.Size = new System.Drawing.Size(0, 13);
             this.label9.TabIndex = 32;
-            this.label9.Text = "Arm Length (inches):";
-            // 
-            // armLengthTextbox
-            // 
-            this.armLengthTextbox.Location = new System.Drawing.Point(1147, 12);
-            this.armLengthTextbox.Name = "armLengthTextbox";
-            this.armLengthTextbox.Size = new System.Drawing.Size(150, 20);
-            this.armLengthTextbox.TabIndex = 33;
             // 
             // TestTextBox
             // 
-            this.TestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TestTextBox.Location = new System.Drawing.Point(996, 379);
+            this.TestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TestTextBox.Location = new System.Drawing.Point(1188, 12);
             this.TestTextBox.Name = "TestTextBox";
-            this.TestTextBox.Size = new System.Drawing.Size(198, 49);
+            this.TestTextBox.Size = new System.Drawing.Size(120, 20);
             this.TestTextBox.TabIndex = 34;
             this.TestTextBox.Text = "";
             // 
@@ -477,17 +469,27 @@
             this.label13.TabIndex = 38;
             this.label13.Text = "(J)";
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(1101, 15);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(81, 13);
+            this.label14.TabIndex = 39;
+            this.label14.Text = "Arm Length (in):";
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1331, 593);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.TestTextBox);
-            this.Controls.Add(this.armLengthTextbox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.bodyWeightTextbox);
@@ -566,12 +568,12 @@
         private System.Windows.Forms.TextBox bodyWeightTextbox;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox armLengthTextbox;
         private System.Windows.Forms.RichTextBox TestTextBox;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }
 

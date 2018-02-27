@@ -40,7 +40,7 @@ namespace KinectJam
         private const double _jointThickness = 3;
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
-        private const int _maxPowerSize = 1500;
+        private const int _maxPowerSize = 300;
         private const int _maxAngleSize = 180;
 
         private Graphics _graphics;
@@ -91,6 +91,7 @@ namespace KinectJam
         private double _previousFilteredInternalWork = 0;
 
         private double _armLengthCalculated = 0;
+        private double _armLengthCalculatedInches = 0;
 
         private double _totalTime = 0;
 
@@ -98,7 +99,7 @@ namespace KinectJam
         public int frame = 0;
 
         private double _alpha = 0.98;
-        private double _alphaFrequency = 0.98;
+        private double _alphaFrequency = 0.25;
         private double _previousFilteredWork = 0;
         private double _previousFilteredAngle = 0;
         private double _previousAngle = 0;
@@ -111,7 +112,7 @@ namespace KinectJam
         private double[] filteredAngleArray = new double[50];
         private double[] angleArrayLeft = new double[50];
 
-        private double _goalLevel = 300;
+        private double _goalLevel = 100;
 
         private bool sliderMouseDown = false;
         private bool sliderScrolling = false;
@@ -124,6 +125,8 @@ namespace KinectJam
         List<double> amplitudeOfCrossList = new List<double>();
         List<double> frequencyList = new List<double>();
         List<double> filteredFrequencyList = new List<double>();
+        List<double> internalWorkList = new List<double>();
+        List<double> internalPowerList = new List<double>();
 
         private double _initialCrossPoint = 0;
         private double _finalCrossPoint = 0;
@@ -303,7 +306,7 @@ namespace KinectJam
                                         _finalAngleLeft = angleLeft;
 
                                         _armLengthCalculated = Distance(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.HandRight]);
-
+                                        _armLengthCalculatedInches = _armLengthCalculated * 39.37;
                                         _exerciseStarted = true;
                                     }
 
@@ -357,6 +360,10 @@ namespace KinectJam
                                     double filteredInternalWork = Filter(_alpha, _previousFilteredInternalWork, instantInternalWork);
                                     double filteredInternalPower = Power(filteredInternalWork);
 
+                                    internalWorkList.Add(_totalInternalWork);
+                                    internalPowerList.Add(filteredInternalPower);
+
+
                                     // Other method
 
                                     double wristWork = JointWork(_wristFinal, _wristInitial, instantWristDistance);
@@ -402,7 +409,7 @@ namespace KinectJam
 
                                         StringBuilder stringBuilderInternalWork = new StringBuilder();
 
-                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculated, 3)));
+                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculatedInches, 1)));
 
                                         TestTextBox.Text = string.Empty;
                                         TestTextBox.Text = stringBuilderInternalWork.ToString();
@@ -430,7 +437,7 @@ namespace KinectJam
                                         _initialCrossPoint = _finalCrossPoint;
                                     }
 
-                                    GraphingPower(_totalTime, Math.Round(filteredpower, 2), _goalLevel);
+                                    GraphingPower(_totalTime, Math.Round(filteredInternalPower, 2), _goalLevel);
                                     GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
 
                                     _wristInitial = _wristFinal;
@@ -645,13 +652,12 @@ namespace KinectJam
         private double RadiusOfGyration()
         {
             double bodyWeightDoub = 0;
-            double armLengthDouble = 0;
 
-            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeightDoub) && double.TryParse(armLengthTextbox.Text, out armLengthDouble))
+            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeightDoub))
             {
                 double Mass = bodyWeightDoub * 0.05 * 0.4536;
 
-                double Length = armLengthDouble * 0.0254;
+                double Length = _armLengthCalculated;
 
                 double momentOfInertia = (1 / 3) * Mass * Math.Pow(Length, 2);
 
@@ -921,13 +927,11 @@ namespace KinectJam
             string folderName = @"C:\TestData";
             System.IO.Directory.CreateDirectory(folderName);
 
-            string fileNameAngle = "TestFile.csv";
+            string fileNameAngle = "TestFileAngle.csv";
             string pathString = System.IO.Path.Combine(folderName, fileNameAngle);
             //string filePath = @"C:\Test.csv";
 
             var angleAndTime = angleList.Zip(timeScale, (a, t) => new { Angle = a, Time = t });
-           
-            //var angleWithCross = angleAndTime.Zip(crossPoint, (s, c) => new { Signal = s, Cross = c });
 
             using (StreamWriter writer = new StreamWriter(pathString))
                 foreach (var value in angleAndTime)
@@ -937,6 +941,7 @@ namespace KinectJam
 
             string fileNameTime = "TestFileFrequency.csv";
             string secondPathString = System.IO.Path.Combine(folderName, fileNameTime);
+
             var crossPoint = crossList.Zip(amplitudeOfCrossList, (ct, ca) => new { crossTime = ct, crossAmplitude = ca });
             var frequencies = frequencyList.Zip(filteredFrequencyList, (f, ff) => new { IFrequency = f, FFrequency = ff });
             var armFrequency = crossPoint.Zip(frequencies, (lpf, f) => new { LowPassFilter = lpf, Frequency = f });
@@ -947,14 +952,17 @@ namespace KinectJam
                     timewriter.WriteLine(item.LowPassFilter.crossTime + "," + item.LowPassFilter.crossAmplitude + "," + item.Frequency.IFrequency + "," + item.Frequency.FFrequency);
                 }
 
-            //string fileNameFrequency = "TestFileFrequency.csv";
-            //string thirdPathString = System.IO.Path.Combine(folderName, fileNameFrequency);
+            string fileNameInternalWork = "TestFileInternalWork.csv";
+            string thirdPathString = System.IO.Path.Combine(folderName, fileNameInternalWork);
 
-            //using (StreamWriter freqwriter = new StreamWriter(thirdPathString))
-            //    foreach (var item in frequencyList)
-            //    {
-            //        freqwriter.WriteLine(item);
-            //    }
+            var iWork = internalWorkList.Zip(timeScale, (iw, t) => new { iWork = iw, time = t });
+            var iWorkandPower = iWork.Zip(internalPowerList, (iwt, ip) => new { iWorkandTime = iwt, iPower = ip });
+
+            using (StreamWriter freqwriter = new StreamWriter(thirdPathString))
+                foreach (var item in iWorkandPower)
+                {
+                    freqwriter.WriteLine(item.iWorkandTime.time + "," + item.iWorkandTime.iWork + "," + item.iPower);
+                }
         }
     }
 }
