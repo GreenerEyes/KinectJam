@@ -49,16 +49,10 @@
             this.AngleSlider = new System.Windows.Forms.TrackBar();
             this.MinAngleLabel = new System.Windows.Forms.Label();
             this.MaxAngleLabel = new System.Windows.Forms.Label();
-            this.DistanceLabel = new System.Windows.Forms.Label();
             this.WorkLabel = new System.Windows.Forms.Label();
             this.PowerLabel = new System.Windows.Forms.Label();
-            this.FilteredWorkLabel = new System.Windows.Forms.Label();
-            this.FilteredPowerLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
             this.RecordButton = new System.Windows.Forms.Button();
@@ -75,6 +69,8 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -102,7 +98,7 @@
             this.DistanceWorkTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DistanceWorkTextBox.Location = new System.Drawing.Point(750, 379);
             this.DistanceWorkTextBox.Name = "DistanceWorkTextBox";
-            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 155);
+            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 153);
             this.DistanceWorkTextBox.TabIndex = 3;
             this.DistanceWorkTextBox.Text = "";
             // 
@@ -208,16 +204,6 @@
             this.MaxAngleLabel.TabIndex = 12;
             this.MaxAngleLabel.Text = "+24";
             // 
-            // DistanceLabel
-            // 
-            this.DistanceLabel.AutoSize = true;
-            this.DistanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DistanceLabel.Location = new System.Drawing.Point(547, 376);
-            this.DistanceLabel.Name = "DistanceLabel";
-            this.DistanceLabel.Size = new System.Drawing.Size(197, 31);
-            this.DistanceLabel.TabIndex = 13;
-            this.DistanceLabel.Text = "Total Distance:";
-            // 
             // WorkLabel
             // 
             this.WorkLabel.AutoSize = true;
@@ -236,36 +222,6 @@
             this.PowerLabel.Size = new System.Drawing.Size(0, 31);
             this.PowerLabel.TabIndex = 15;
             // 
-            // FilteredWorkLabel
-            // 
-            this.FilteredWorkLabel.AutoSize = true;
-            this.FilteredWorkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FilteredWorkLabel.Location = new System.Drawing.Point(547, 407);
-            this.FilteredWorkLabel.Name = "FilteredWorkLabel";
-            this.FilteredWorkLabel.Size = new System.Drawing.Size(183, 31);
-            this.FilteredWorkLabel.TabIndex = 16;
-            this.FilteredWorkLabel.Text = "Filtered Work:";
-            // 
-            // FilteredPowerLabel
-            // 
-            this.FilteredPowerLabel.AutoSize = true;
-            this.FilteredPowerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FilteredPowerLabel.Location = new System.Drawing.Point(547, 438);
-            this.FilteredPowerLabel.Name = "FilteredPowerLabel";
-            this.FilteredPowerLabel.Size = new System.Drawing.Size(197, 31);
-            this.FilteredPowerLabel.TabIndex = 17;
-            this.FilteredPowerLabel.Text = "Filtered Power:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(922, 376);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 31);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "(m)";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -283,26 +239,6 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(0, 31);
             this.label3.TabIndex = 20;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(922, 407);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(46, 31);
-            this.label4.TabIndex = 21;
-            this.label4.Text = "(J)";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(922, 438);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(68, 31);
-            this.label5.TabIndex = 22;
-            this.label5.Text = "(J/s)";
             // 
             // PauseButton
             // 
@@ -349,17 +285,17 @@
             series13.ChartArea = "ChartArea1";
             series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series13.Legend = "Legend1";
-            series13.Name = "AngleR";
+            series13.Name = "Arm Angle: Right";
             series14.BorderWidth = 5;
             series14.ChartArea = "ChartArea1";
             series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series14.Legend = "Legend1";
-            series14.Name = "FilteredAR";
+            series14.Name = "Filtered Signal";
             series15.BorderWidth = 5;
             series15.ChartArea = "ChartArea1";
             series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series15.Legend = "Legend1";
-            series15.Name = "AngleLeft";
+            series15.Name = "Arm Angle: Left";
             this.AngleGraph.Series.Add(series13);
             this.AngleGraph.Series.Add(series14);
             this.AngleGraph.Series.Add(series15);
@@ -433,7 +369,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(547, 472);
+            this.label10.Location = new System.Drawing.Point(547, 379);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(183, 31);
             this.label10.TabIndex = 35;
@@ -443,7 +379,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(547, 503);
+            this.label11.Location = new System.Drawing.Point(547, 410);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(197, 31);
             this.label11.TabIndex = 36;
@@ -453,7 +389,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(922, 503);
+            this.label12.Location = new System.Drawing.Point(920, 410);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(68, 31);
             this.label12.TabIndex = 37;
@@ -463,7 +399,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(922, 472);
+            this.label13.Location = new System.Drawing.Point(922, 379);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(46, 31);
             this.label13.TabIndex = 38;
@@ -479,11 +415,33 @@
             this.label14.TabIndex = 39;
             this.label14.Text = "Arm Length (in):";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(547, 441);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(93, 31);
+            this.label1.TabIndex = 40;
+            this.label1.Text = "METs:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(547, 472);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(191, 31);
+            this.label4.TabIndex = 41;
+            this.label4.Text = "Filtered METs:";
+            // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1331, 593);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
@@ -500,16 +458,10 @@
             this.Controls.Add(this.RecordButton);
             this.Controls.Add(this.ContinueButton);
             this.Controls.Add(this.PauseButton);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.FilteredPowerLabel);
-            this.Controls.Add(this.FilteredWorkLabel);
             this.Controls.Add(this.PowerLabel);
             this.Controls.Add(this.WorkLabel);
-            this.Controls.Add(this.DistanceLabel);
             this.Controls.Add(this.MaxAngleLabel);
             this.Controls.Add(this.MinAngleLabel);
             this.Controls.Add(this.AngleSlider);
@@ -548,16 +500,10 @@
         private System.Windows.Forms.TrackBar AngleSlider;
         private System.Windows.Forms.Label MinAngleLabel;
         private System.Windows.Forms.Label MaxAngleLabel;
-        private System.Windows.Forms.Label DistanceLabel;
         private System.Windows.Forms.Label WorkLabel;
         private System.Windows.Forms.Label PowerLabel;
-        private System.Windows.Forms.Label FilteredWorkLabel;
-        private System.Windows.Forms.Label FilteredPowerLabel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button PauseButton;
         private System.Windows.Forms.Button ContinueButton;
         private System.Windows.Forms.Button RecordButton;
@@ -574,6 +520,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label4;
     }
 }
 

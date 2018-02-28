@@ -103,6 +103,9 @@ namespace KinectJam
         private double _previousFilteredWork = 0;
         private double _previousFilteredAngle = 0;
         private double _previousAngle = 0;
+        private double _METs = 0;
+        private double _filteredMETs = 0;
+        private double _previouslyFilteredMETs = 0;
 
         private double[] timeArray = new double[50];
         private double[] workArray = new double[50];
@@ -305,7 +308,11 @@ namespace KinectJam
                                         _initialAngleLeft = angleLeft;
                                         _finalAngleLeft = angleLeft;
 
-                                        _armLengthCalculated = Distance(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.HandRight]);
+                                        double shoulderToElbow = Distance(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
+                                        double elbowToWrist = Distance(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
+                                        double wristToHand = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
+
+                                        _armLengthCalculated = shoulderToElbow + elbowToWrist + wristToHand;
                                         _armLengthCalculatedInches = _armLengthCalculated * 39.37;
                                         _exerciseStarted = true;
                                     }
@@ -363,8 +370,12 @@ namespace KinectJam
                                     internalWorkList.Add(_totalInternalWork);
                                     internalPowerList.Add(filteredInternalPower);
 
+                                    _METs = JoulesToMETs(filteredInternalPower);
+                                    _filteredMETs = Filter(_alpha, _previouslyFilteredMETs, _METs);
 
-                                    // Other method
+
+
+                                    /*Other method
 
                                     double wristWork = JointWork(_wristFinal, _wristInitial, instantWristDistance);
                                     double elbowWork = ElbowWork(_elbowFinal, _elbowInitial, instantElbowDistance);
@@ -379,10 +390,12 @@ namespace KinectJam
 
                                     _totalWork += instantWork;
                                     double power = Power(instantWork);
-
+                                                                        
                                     double filteredwork = Filter(_alpha, _previousFilteredWork, instantWork);
                                     _totalFilteredWork += filteredwork;
                                     double filteredpower = Power(filteredwork);
+                                    
+                                    */
 
                                     double filteredangle = Filter(_alpha, _previousFilteredAngle, angle);
 
@@ -396,13 +409,16 @@ namespace KinectJam
                                         //stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalWork, 0)));
                                         //stringBuilder.AppendLine(string.Format("{0}", Math.Round(power, 0)));
 
-                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalDistance, 0)));
-                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalFilteredWork, 0)));
-                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredpower, 0)));
+                                        //stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalDistance, 0)));
+                                        //stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalFilteredWork, 0)));
+                                        //stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredpower, 0)));
 
                                         //stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(internalWork, 0)));
+
                                         stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalInternalWork, 0)));
                                         stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredInternalPower, 0)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_METs, 2)));
+                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_filteredMETs, 2)));
 
                                         DistanceWorkTextBox.Text = string.Empty;
                                         DistanceWorkTextBox.Text = stringBuilder.ToString();
@@ -449,10 +465,11 @@ namespace KinectJam
                                     _initialAngle = _finalAngle;
                                     _initialAngleLeft = _finalAngleLeft;
 
-                                    _previousFilteredWork = filteredwork;
+                                    //_previousFilteredWork = filteredwork;
                                     _previousFilteredAngle = filteredangle;
 
                                     _previousFilteredInternalWork = filteredInternalWork;
+                                    _previouslyFilteredMETs = _filteredMETs;
 
                                     _previousAngle = angle;
 
@@ -679,6 +696,17 @@ namespace KinectJam
             return 0;
         }
 
+        private double JoulesToMETs(double power)
+        {
+            double bodyWeight = 0;
+            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeight))
+            {
+                double mass = bodyWeight * 0.4536;
+                return power * 0.000239 / (0.00029167 * mass);
+            }
+            return 0;
+        }
+
         private double Filter(double alpha, double previousFilter, double filter)
         {
             // y(n) = alpha*y(n-1) + (1-alpha)*x(n)
@@ -859,22 +887,22 @@ namespace KinectJam
                 angleArrayLeft[angleArrayLeft.Length - 1] = angleValueLeft;
                 Array.Copy(angleArrayLeft, 1, angleArrayLeft, 0, angleArrayLeft.Length - 1);
 
-                AngleGraph.Series["AngleR"].Points.Clear();
+                AngleGraph.Series["Arm Angle: Right"].Points.Clear();
                 for (int i = 0; i < angleArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["AngleR"].Points.AddXY(timeArray[i], angleArray[i]);
+                    AngleGraph.Series["Arm Angle: Right"].Points.AddXY(timeArray[i], angleArray[i]);
                 }
 
-                AngleGraph.Series["FilteredAR"].Points.Clear();
+                AngleGraph.Series["Filtered Signal"].Points.Clear();
                 for (int i = 0; i < filteredAngleArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["FilteredAR"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+                    AngleGraph.Series["Filtered Signal"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
                 }
 
-                AngleGraph.Series["AngleLeft"].Points.Clear();
+                AngleGraph.Series["Arm Angle: Left"].Points.Clear();
                 for (int i = 0; i < angleArrayLeft.Count() - 1; i++)
                 {
-                    AngleGraph.Series["AngleLeft"].Points.AddXY(timeArray[i], angleArrayLeft[i]);
+                    AngleGraph.Series["Arm Angle: Left"].Points.AddXY(timeArray[i], angleArrayLeft[i]);
                 }
             }
         }
