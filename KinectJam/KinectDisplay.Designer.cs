@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -71,6 +71,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.goalLevelTextbox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
@@ -98,7 +99,7 @@
             this.DistanceWorkTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DistanceWorkTextBox.Location = new System.Drawing.Point(750, 379);
             this.DistanceWorkTextBox.Name = "DistanceWorkTextBox";
-            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 153);
+            this.DistanceWorkTextBox.Size = new System.Drawing.Size(166, 93);
             this.DistanceWorkTextBox.TabIndex = 3;
             this.DistanceWorkTextBox.Text = "";
             // 
@@ -107,9 +108,9 @@
             this.weightLabel.AutoSize = true;
             this.weightLabel.Location = new System.Drawing.Point(547, 15);
             this.weightLabel.Name = "weightLabel";
-            this.weightLabel.Size = new System.Drawing.Size(86, 13);
+            this.weightLabel.Size = new System.Drawing.Size(90, 13);
             this.weightLabel.TabIndex = 4;
-            this.weightLabel.Text = "Held Weight (lb):";
+            this.weightLabel.Text = "Held Weight (kg):";
             this.weightLabel.Click += new System.EventHandler(this.weightLabel_Click);
             // 
             // heldWeightTextbox
@@ -121,25 +122,25 @@
             // 
             // PowerGraph
             // 
-            chartArea5.Name = "ChartArea1";
-            this.PowerGraph.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.PowerGraph.Legends.Add(legend5);
+            chartArea1.Name = "ChartArea1";
+            this.PowerGraph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.PowerGraph.Legends.Add(legend1);
             this.PowerGraph.Location = new System.Drawing.Point(547, 56);
             this.PowerGraph.Name = "PowerGraph";
-            series11.BorderWidth = 5;
-            series11.ChartArea = "ChartArea1";
-            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series11.Legend = "Legend1";
-            series11.Name = "PowerData";
-            series12.BorderWidth = 5;
-            series12.ChartArea = "ChartArea1";
-            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series12.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series12.Legend = "Legend1";
-            series12.Name = "GoalLevel";
-            this.PowerGraph.Series.Add(series11);
-            this.PowerGraph.Series.Add(series12);
+            series1.BorderWidth = 5;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Legend = "Legend1";
+            series1.Name = "PowerData";
+            series2.BorderWidth = 5;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series2.Legend = "Legend1";
+            series2.Name = "GoalLevel";
+            this.PowerGraph.Series.Add(series1);
+            this.PowerGraph.Series.Add(series2);
             this.PowerGraph.Size = new System.Drawing.Size(386, 317);
             this.PowerGraph.TabIndex = 6;
             this.PowerGraph.Text = "chart1";
@@ -275,30 +276,30 @@
             // 
             // AngleGraph
             // 
-            chartArea6.Name = "ChartArea1";
-            this.AngleGraph.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            this.AngleGraph.Legends.Add(legend6);
+            chartArea2.Name = "ChartArea1";
+            this.AngleGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.AngleGraph.Legends.Add(legend2);
             this.AngleGraph.Location = new System.Drawing.Point(939, 56);
             this.AngleGraph.Name = "AngleGraph";
-            series13.BorderWidth = 5;
-            series13.ChartArea = "ChartArea1";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series13.Legend = "Legend1";
-            series13.Name = "Arm Angle: Right";
-            series14.BorderWidth = 5;
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series14.Legend = "Legend1";
-            series14.Name = "Filtered Signal";
-            series15.BorderWidth = 5;
-            series15.ChartArea = "ChartArea1";
-            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series15.Legend = "Legend1";
-            series15.Name = "Arm Angle: Left";
-            this.AngleGraph.Series.Add(series13);
-            this.AngleGraph.Series.Add(series14);
-            this.AngleGraph.Series.Add(series15);
+            series3.BorderWidth = 5;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series3.Legend = "Legend1";
+            series3.Name = "Arm Angle: Right";
+            series4.BorderWidth = 5;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.Legend = "Legend1";
+            series4.Name = "Filtered Signal";
+            series5.BorderWidth = 5;
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series5.Legend = "Legend1";
+            series5.Name = "Arm Angle: Left";
+            this.AngleGraph.Series.Add(series3);
+            this.AngleGraph.Series.Add(series4);
+            this.AngleGraph.Series.Add(series5);
             this.AngleGraph.Size = new System.Drawing.Size(386, 317);
             this.AngleGraph.TabIndex = 26;
             this.AngleGraph.Text = "chart1";
@@ -306,9 +307,9 @@
             // FilteredFrequencyTextBox
             // 
             this.FilteredFrequencyTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FilteredFrequencyTextBox.Location = new System.Drawing.Point(750, 538);
+            this.FilteredFrequencyTextBox.Location = new System.Drawing.Point(750, 495);
             this.FilteredFrequencyTextBox.Name = "FilteredFrequencyTextBox";
-            this.FilteredFrequencyTextBox.Size = new System.Drawing.Size(166, 41);
+            this.FilteredFrequencyTextBox.Size = new System.Drawing.Size(166, 43);
             this.FilteredFrequencyTextBox.TabIndex = 27;
             this.FilteredFrequencyTextBox.Text = "";
             // 
@@ -316,7 +317,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(547, 538);
+            this.label6.Location = new System.Drawing.Point(547, 495);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(151, 31);
             this.label6.TabIndex = 28;
@@ -326,7 +327,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(922, 541);
+            this.label7.Location = new System.Drawing.Point(922, 498);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 31);
             this.label7.TabIndex = 29;
@@ -344,9 +345,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(768, 15);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(88, 13);
+            this.label8.Size = new System.Drawing.Size(92, 13);
             this.label8.TabIndex = 31;
-            this.label8.Text = "Body Weight (lb):";
+            this.label8.Text = "Body Weight (kg):";
             // 
             // label9
             // 
@@ -358,10 +359,10 @@
             // 
             // TestTextBox
             // 
-            this.TestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TestTextBox.Location = new System.Drawing.Point(1188, 12);
+            this.TestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TestTextBox.Location = new System.Drawing.Point(750, 551);
             this.TestTextBox.Name = "TestTextBox";
-            this.TestTextBox.Size = new System.Drawing.Size(120, 20);
+            this.TestTextBox.Size = new System.Drawing.Size(166, 38);
             this.TestTextBox.TabIndex = 34;
             this.TestTextBox.Text = "";
             // 
@@ -408,38 +409,45 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(1101, 15);
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(547, 550);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(81, 13);
+            this.label14.Size = new System.Drawing.Size(161, 31);
             this.label14.TabIndex = 39;
-            this.label14.Text = "Arm Length (in):";
+            this.label14.Text = "Arm Length:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(547, 441);
+            this.label1.Location = new System.Drawing.Point(922, 546);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 31);
+            this.label1.Size = new System.Drawing.Size(54, 31);
             this.label1.TabIndex = 40;
-            this.label1.Text = "METs:";
+            this.label1.Text = "(m)";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(547, 472);
+            this.label4.Location = new System.Drawing.Point(998, 15);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(191, 31);
+            this.label4.Size = new System.Drawing.Size(58, 13);
             this.label4.TabIndex = 41;
-            this.label4.Text = "Filtered METs:";
+            this.label4.Text = "Goal Level";
+            // 
+            // goalLevelTextbox
+            // 
+            this.goalLevelTextbox.Location = new System.Drawing.Point(1062, 12);
+            this.goalLevelTextbox.Name = "goalLevelTextbox";
+            this.goalLevelTextbox.Size = new System.Drawing.Size(120, 20);
+            this.goalLevelTextbox.TabIndex = 42;
             // 
             // KinectDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1331, 593);
+            this.Controls.Add(this.goalLevelTextbox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label14);
@@ -522,6 +530,7 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox goalLevelTextbox;
     }
 }
 

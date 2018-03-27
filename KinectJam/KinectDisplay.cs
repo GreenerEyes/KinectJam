@@ -40,7 +40,7 @@ namespace KinectJam
         private const double _jointThickness = 3;
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
-        private const int _maxPowerSize = 300;
+        private const int _maxPowerSize = 400;
         private const int _maxAngleSize = 180;
 
         private Graphics _graphics;
@@ -78,8 +78,8 @@ namespace KinectJam
         private double _finalAngleLeft = 0;
 
         private double _totalDistance = 0;
-        private double _totalWork = 0;
-        private double _totalFilteredWork = 0;
+        //private double _totalWork = 0;
+        //private double _totalFilteredWork = 0;
 
         private double _angularVelocity = 0;
         private double _angularVelocityLeft = 0;
@@ -91,7 +91,7 @@ namespace KinectJam
         private double _previousFilteredInternalWork = 0;
 
         private double _armLengthCalculated = 0;
-        private double _armLengthCalculatedInches = 0;
+        //private double _armLengthCalculatedInches = 0;
 
         private double _totalTime = 0;
 
@@ -100,7 +100,7 @@ namespace KinectJam
 
         private double _alpha = 0.98;
         private double _alphaFrequency = 0.50;
-        private double _previousFilteredWork = 0;
+        //private double _previousFilteredWork = 0;
         private double _previousFilteredAngle = 0;
         private double _previousAngle = 0;
         private double _METs = 0;
@@ -115,7 +115,8 @@ namespace KinectJam
         private double[] filteredAngleArray = new double[50];
         private double[] angleArrayLeft = new double[50];
 
-        private double _goalLevel = 100;
+        private double _goalLevel = 0;
+        private double _regGoalLevel = 240;
 
         private bool sliderMouseDown = false;
         private bool sliderScrolling = false;
@@ -123,6 +124,7 @@ namespace KinectJam
         private bool _paused = false;
 
         List<double> angleList = new List<double>();
+        List<double> angleLeftList = new List<double>();
         List<double> crossList = new List<double>();
         List<double> timeScale = new List<double>();
         List<double> amplitudeOfCrossList = new List<double>();
@@ -131,10 +133,18 @@ namespace KinectJam
         List<double> internalWorkList = new List<double>();
         List<double> internalPowerList = new List<double>();
 
+        List<double> bodyWeightList = new List<double>();
+        List<double> heldWeightList = new List<double>();
+        List<double> armLengthList = new List<double>();
+        List<double> heldWeightChangeList = new List<double>();
+
         private double _initialCrossPoint = 0;
         private double _finalCrossPoint = 0;
         private double _filteredFrequency = 0;
         private double _previouslyFilteredFrequency = 0;
+
+        private double _bodyWeightText = 0;
+        private double _heldWeightText = 0;
 
         public KinectDisplay()
         {
@@ -154,9 +164,13 @@ namespace KinectJam
 
             PowerGraph.ChartAreas[0].AxisY.Maximum = _maxPowerSize;
             PowerGraph.ChartAreas[0].AxisY.Minimum = 0;
+            PowerGraph.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
+            PowerGraph.ChartAreas[0].AxisX2.LabelStyle.Format = "#.#";
 
             AngleGraph.ChartAreas[0].AxisY.Maximum = _maxAngleSize;
             AngleGraph.ChartAreas[0].AxisY.Minimum = 0;
+            AngleGraph.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
+            AngleGraph.ChartAreas[0].AxisX2.LabelStyle.Format = "#.#";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -313,13 +327,26 @@ namespace KinectJam
                                         double wristToHand = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
 
                                         _armLengthCalculated = shoulderToElbow + elbowToWrist + wristToHand;
-                                        _armLengthCalculatedInches = _armLengthCalculated * 39.37;
+                                        armLengthList.Add(_armLengthCalculated);
+                                        //_armLengthCalculatedInches = _armLengthCalculated * 39.37;
                                         _exerciseStarted = true;
+
+                                        if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+                                        {
+                                            bodyWeightList.Add(_bodyWeightText);
+                                        }
+
+                                        if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
+                                        {
+                                            heldWeightList.Add(_heldWeightText);
+                                            heldWeightChangeList.Add(0);
+                                        }
                                     }
 
                                     StringBuilder stringBuilder = new StringBuilder();
                                     
                                     angleList.Add(angle);
+                                    angleLeftList.Add(angleLeft);
 
                                     _finalAngle = 180 - GetAngle(GetDepthPoint(skeleton.Joints[JointType.Spine]), GetDepthPoint(skeleton.Joints[JointType.ShoulderRight]), GetDepthPoint(skeleton.Joints[JointType.ElbowRight]));
                                     _finalAngleLeft = 180 - GetAngle(GetDepthPoint(skeleton.Joints[JointType.Spine]), GetDepthPoint(skeleton.Joints[JointType.ShoulderLeft]), GetDepthPoint(skeleton.Joints[JointType.ElbowLeft]));
@@ -417,15 +444,15 @@ namespace KinectJam
 
                                         stringBuilder.AppendLine(string.Format("{0}", Math.Round(_totalInternalWork, 0)));
                                         stringBuilder.AppendLine(string.Format("{0}", Math.Round(filteredInternalPower, 0)));
-                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_METs, 2)));
-                                        stringBuilder.AppendLine(string.Format("{0}", Math.Round(_filteredMETs, 2)));
+                                        //stringBuilder.AppendLine(string.Format("{0}", Math.Round(_METs, 2)));
+                                        //stringBuilder.AppendLine(string.Format("{0}", Math.Round(_filteredMETs, 2)));
 
                                         DistanceWorkTextBox.Text = string.Empty;
                                         DistanceWorkTextBox.Text = stringBuilder.ToString();
 
                                         StringBuilder stringBuilderInternalWork = new StringBuilder();
 
-                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculatedInches, 1)));
+                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculated, 1)));
 
                                         TestTextBox.Text = string.Empty;
                                         TestTextBox.Text = stringBuilderInternalWork.ToString();
@@ -453,7 +480,15 @@ namespace KinectJam
                                         _initialCrossPoint = _finalCrossPoint;
                                     }
 
-                                    GraphingPower(_totalTime, Math.Round(filteredInternalPower, 2), _goalLevel);
+                                    if (double.TryParse(goalLevelTextbox.Text, out _goalLevel))
+                                    {
+                                        GraphingPower(_totalTime, Math.Round(filteredInternalPower, 2), _goalLevel);
+                                    }
+                                    else
+                                    {
+                                        GraphingPower(_totalTime, Math.Round(filteredInternalPower, 2), _regGoalLevel);
+                                    }
+                                    
                                     GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
 
                                     _wristInitial = _wristFinal;
@@ -592,66 +627,63 @@ namespace KinectJam
             return Math.Sqrt(changeX + changeY);
         }
 
-        private double Accel(float finalPosition, float initialPosition)
-        {
-            double change = finalPosition - initialPosition;
-            return (2 * (change)) / Math.Pow(1.0 / 30.0, 2.0);
-        }
+        //private double Accel(float finalPosition, float initialPosition)
+        //{
+        //    double change = finalPosition - initialPosition;
+        //    return (2 * (change)) / Math.Pow(1.0 / 30.0, 2.0);
+        //}
 
-        private double Force(double acceleration, bool accountForGravity = false)
-        {
-            double heldWeight = 0;
-            if (double.TryParse(heldWeightTextbox.Text, out heldWeight))
-            {
-                heldWeight = heldWeight * 0.4536;
-                return accountForGravity ? (heldWeight * acceleration) - (9.81 * heldWeight) : heldWeight * acceleration;
-            }
-            return 0;
-        }
+        //private double Force(double acceleration, bool accountForGravity = false)
+        //{
+        //    if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
+        //    {
+        //        return accountForGravity ? (_heldWeightText * acceleration) - (9.81 * _heldWeightText) : _heldWeightText * acceleration;
+        //    }
+        //    return 0;
+        //}
 
-        private double TotalForce(double forceX, double forceY)
-        {
-            double fx = Math.Pow(forceX, 2);
-            double fy = Math.Pow(forceY, 2);
-            return Math.Sqrt(fx + fy);
-        }
+        //private double TotalForce(double forceX, double forceY)
+        //{
+        //    double fx = Math.Pow(forceX, 2);
+        //    double fy = Math.Pow(forceY, 2);
+        //    return Math.Sqrt(fx + fy);
+        //}
 
-        private double Work(double totalForce, double distance)
-        {
-            return totalForce * distance;
-        }
+        //private double Work(double totalForce, double distance)
+        //{
+        //    return totalForce * distance;
+        //}
 
-        private double ForceElbow(double acceleration, bool accountForGravityArm = false)
-        {
-            double bodyWeightText = 0;
-            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeightText))
-            {
-                double armWeightlb = bodyWeightText * 0.05;
-                double armWeight = armWeightlb * 0.4536;
-                return accountForGravityArm ? (armWeight * acceleration) - (9.81 * armWeight) : armWeight * acceleration;
-            }
-            return 0;
-        }
+        //private double ForceElbow(double acceleration, bool accountForGravityArm = false)
+        //{
+        //    if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+        //    {
+        //        double armWeight = _bodyWeightText * 0.05;
 
-        private double JointWork(Joint _jointFinal, Joint _jointInitial, double instantJointDistance)
-        {
-            double accelerationX = Accel(_jointFinal.Position.X, _jointInitial.Position.X);
-            double accelerationY = Accel(_jointFinal.Position.Y, _jointInitial.Position.Y);
-            double forceX = Force(accelerationX);
-            double forceY = Force(accelerationY, true);
+        //        return accountForGravityArm ? (armWeight * acceleration) - (9.81 * armWeight) : armWeight * acceleration;
+        //    }
+        //    return 0;
+        //}
 
-            return Work(TotalForce(forceX, forceY), instantJointDistance);
-        }
+        //private double JointWork(Joint _jointFinal, Joint _jointInitial, double instantJointDistance)
+        //{
+        //    double accelerationX = Accel(_jointFinal.Position.X, _jointInitial.Position.X);
+        //    double accelerationY = Accel(_jointFinal.Position.Y, _jointInitial.Position.Y);
+        //    double forceX = Force(accelerationX);
+        //    double forceY = Force(accelerationY, true);
 
-        private double ElbowWork(Joint _elbowFinalValue, Joint _elbowInitialValue, double instantElbowDistanceValue)
-        {
-            double accelerationEX = Accel(_elbowFinalValue.Position.X, _elbowInitialValue.Position.X);
-            double accelerationEY = Accel(_elbowFinalValue.Position.Y, _elbowInitialValue.Position.Y);
-            double forceEX = ForceElbow(accelerationEX);
-            double forceEY = ForceElbow(accelerationEY, true);
+        //    return Work(TotalForce(forceX, forceY), instantJointDistance);
+        //}
 
-            return Work(TotalForce(forceEX, forceEY), instantElbowDistanceValue); 
-        }
+        //private double ElbowWork(Joint _elbowFinalValue, Joint _elbowInitialValue, double instantElbowDistanceValue)
+        //{
+        //    double accelerationEX = Accel(_elbowFinalValue.Position.X, _elbowInitialValue.Position.X);
+        //    double accelerationEY = Accel(_elbowFinalValue.Position.Y, _elbowInitialValue.Position.Y);
+        //    double forceEX = ForceElbow(accelerationEX);
+        //    double forceEY = ForceElbow(accelerationEY, true);
+
+        //    return Work(TotalForce(forceEX, forceEY), instantElbowDistanceValue); 
+        //}
 
         private double RelativeVelocity(Joint _finalPosition, Joint _initialPosition)
         {
@@ -668,16 +700,13 @@ namespace KinectJam
 
         private double RadiusOfGyration()
         {
-            double bodyWeightDoub = 0;
 
-            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeightDoub))
+            if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
             {
-                double Mass = bodyWeightDoub * 0.05 * 0.4536;
-
+                bodyWeightList.Add(_bodyWeightText);
+                double Mass = _bodyWeightText * 0.05;
                 double Length = _armLengthCalculated;
-
                 double momentOfInertia = (1 / 3) * Mass * Math.Pow(Length, 2);
-
                 return Math.Sqrt(momentOfInertia / Mass);
             }
             return 0;
@@ -686,12 +715,15 @@ namespace KinectJam
 
         private double InternalWork(double relativeVelocity, double angularVelocity)
         {
-            double bodyWeightDouble = 0;
-            if (double.TryParse(bodyWeightTextbox.Text, out bodyWeightDouble))
+            if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
             {
-                double mass = bodyWeightDouble * 0.05 * 0.4536;
+                if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
+                {
+                    double mass = (_bodyWeightText * 0.05) + _heldWeightText;
 
-                return (0.5 * mass * Math.Pow(relativeVelocity, 2)) + (0.5 * mass * Math.Pow(RadiusOfGyration(), 2) * Math.Pow(angularVelocity, 2));
+                    return (0.5 * mass * Math.Pow(relativeVelocity, 2)) + (0.5 * mass * Math.Pow(RadiusOfGyration(), 2) * Math.Pow(angularVelocity, 2));
+                }
+                return 0;
             }
             return 0;
         }
@@ -701,7 +733,7 @@ namespace KinectJam
             double bodyWeight = 0;
             if (double.TryParse(bodyWeightTextbox.Text, out bodyWeight))
             {
-                double mass = bodyWeight * 0.4536;
+                double mass = bodyWeight;
                 return power * 0.000239 / (0.00029167 * mass);
             }
             return 0;
@@ -738,17 +770,17 @@ namespace KinectJam
             DrawBone(jointCollection[JointType.WristRight], jointCollection[JointType.HandRight]);
 
             DrawBone(jointCollection[JointType.ShoulderCenter], jointCollection[JointType.Spine]);
-            DrawBone(jointCollection[JointType.Spine], jointCollection[JointType.HipCenter]);
+            //DrawBone(jointCollection[JointType.Spine], jointCollection[JointType.HipCenter]);
 
-            DrawBone(jointCollection[JointType.HipCenter], jointCollection[JointType.HipLeft]);
-            DrawBone(jointCollection[JointType.HipLeft], jointCollection[JointType.KneeLeft]);
-            DrawBone(jointCollection[JointType.KneeLeft], jointCollection[JointType.AnkleLeft]);
-            DrawBone(jointCollection[JointType.AnkleLeft], jointCollection[JointType.FootLeft]);
+            //DrawBone(jointCollection[JointType.HipCenter], jointCollection[JointType.HipLeft]);
+            //DrawBone(jointCollection[JointType.HipLeft], jointCollection[JointType.KneeLeft]);
+            //DrawBone(jointCollection[JointType.KneeLeft], jointCollection[JointType.AnkleLeft]);
+            //DrawBone(jointCollection[JointType.AnkleLeft], jointCollection[JointType.FootLeft]);
 
-            DrawBone(jointCollection[JointType.HipCenter], jointCollection[JointType.HipRight]);
-            DrawBone(jointCollection[JointType.HipRight], jointCollection[JointType.KneeRight]);
-            DrawBone(jointCollection[JointType.KneeRight], jointCollection[JointType.AnkleRight]);
-            DrawBone(jointCollection[JointType.AnkleRight], jointCollection[JointType.FootRight]);
+            //DrawBone(jointCollection[JointType.HipCenter], jointCollection[JointType.HipRight]);
+            //DrawBone(jointCollection[JointType.HipRight], jointCollection[JointType.KneeRight]);
+            //DrawBone(jointCollection[JointType.KneeRight], jointCollection[JointType.AnkleRight]);
+            //DrawBone(jointCollection[JointType.AnkleRight], jointCollection[JointType.FootRight]);
 
             DrawPoint(jointCollection[JointType.Head]);
             DrawPoint(jointCollection[JointType.ShoulderCenter]);
@@ -764,17 +796,17 @@ namespace KinectJam
             DrawPoint(jointCollection[JointType.HandRight]);
 
             DrawPoint(jointCollection[JointType.Spine]);
-            DrawPoint(jointCollection[JointType.HipCenter]);
+            //DrawPoint(jointCollection[JointType.HipCenter]);
 
-            DrawPoint(jointCollection[JointType.HipLeft]);
-            DrawPoint(jointCollection[JointType.KneeLeft]);
-            DrawPoint(jointCollection[JointType.AnkleLeft]);
-            DrawPoint(jointCollection[JointType.FootLeft]);
+            //DrawPoint(jointCollection[JointType.HipLeft]);
+            //DrawPoint(jointCollection[JointType.KneeLeft]);
+            //DrawPoint(jointCollection[JointType.AnkleLeft]);
+            //DrawPoint(jointCollection[JointType.FootLeft]);
 
-            DrawPoint(jointCollection[JointType.HipRight]);
-            DrawPoint(jointCollection[JointType.KneeRight]);
-            DrawPoint(jointCollection[JointType.AnkleRight]);
-            DrawPoint(jointCollection[JointType.FootRight]);
+            //DrawPoint(jointCollection[JointType.HipRight]);
+            //DrawPoint(jointCollection[JointType.KneeRight]);
+            //DrawPoint(jointCollection[JointType.AnkleRight]);
+            //DrawPoint(jointCollection[JointType.FootRight]);
 
             //StringBuilder stringBuilder = new StringBuilder();
             //stringBuilder.AppendLine(PrintJointCoordinates(jointCollection[JointType.Head]));
@@ -959,13 +991,19 @@ namespace KinectJam
             string pathString = System.IO.Path.Combine(folderName, fileNameAngle);
             //string filePath = @"C:\Test.csv";
 
-            var angleAndTime = angleList.Zip(timeScale, (a, t) => new { Angle = a, Time = t });
+            var bothAngles = angleList.Zip(angleLeftList, (ar, al) => new { AngleRight = ar, AngleLeft = al });
+            var angleAndTime = bothAngles.Zip(timeScale, (a, t) => new { Angle = a, Time = t });
 
             using (StreamWriter writer = new StreamWriter(pathString))
+            {
+                writer.WriteLine("Time (s)" + "," + "Right Arm Angle (Degrees)" + "," + "Left Arm Angle (Degrees)");
+
                 foreach (var value in angleAndTime)
                 {
-                    writer.WriteLine(value.Time + "," + value.Angle);
+                    writer.WriteLine(value.Time + "," + value.Angle.AngleRight + "," + value.Angle.AngleLeft);
                 }
+            }
+
 
             string fileNameTime = "TestFileFrequency.csv";
             string secondPathString = System.IO.Path.Combine(folderName, fileNameTime);
@@ -975,10 +1013,14 @@ namespace KinectJam
             var armFrequency = crossPoint.Zip(frequencies, (lpf, f) => new { LowPassFilter = lpf, Frequency = f });
 
             using (StreamWriter timewriter = new StreamWriter(secondPathString))
+            {
+                timewriter.WriteLine("Time (s)" + "," + "Moving Average (Degrees)" + "," + "Instant Frequency (Hz)" + "," + "Filtered Frequency (Hz)");
                 foreach (var item in armFrequency)
                 {
                     timewriter.WriteLine(item.LowPassFilter.crossTime + "," + item.LowPassFilter.crossAmplitude + "," + item.Frequency.IFrequency + "," + item.Frequency.FFrequency);
                 }
+            }
+
 
             string fileNameInternalWork = "TestFileInternalWork.csv";
             string thirdPathString = System.IO.Path.Combine(folderName, fileNameInternalWork);
@@ -987,10 +1029,46 @@ namespace KinectJam
             var iWorkandPower = iWork.Zip(internalPowerList, (iwt, ip) => new { iWorkandTime = iwt, iPower = ip });
 
             using (StreamWriter freqwriter = new StreamWriter(thirdPathString))
+            {
+                freqwriter.WriteLine("Time (s)" + "," + "Work (J)" + "," + "Power (J/s)");
+
                 foreach (var item in iWorkandPower)
                 {
                     freqwriter.WriteLine(item.iWorkandTime.time + "," + item.iWorkandTime.iWork + "," + item.iPower);
                 }
+            }
+
+
+            if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+            {
+                bodyWeightList.Add(_bodyWeightText);
+            }
+
+            if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
+            {
+                heldWeightList.Add(_heldWeightText);
+                armLengthList.Add(_armLengthCalculated);
+                heldWeightChangeList.Add(_totalTime);
+            }
+
+
+            string fileNamePatientInfo = "TestFilePatientInformation.csv";
+            string fourthPathString = System.IO.Path.Combine(folderName, fileNamePatientInfo);
+
+            var weightValues = bodyWeightList.Zip(heldWeightList, (bw, hw) => new { bodyWeight = bw, heldWeight = hw });
+            var timeAndLength = armLengthList.Zip(heldWeightChangeList, (l, t) => new { armLength = l, time = t });
+            var patientInformation = timeAndLength.Zip(weightValues, (tl, w) => new { timeAndLength = tl, weights = w });
+
+            using (StreamWriter writer = new StreamWriter(fourthPathString))
+            {
+                writer.WriteLine("Time (s)" + "," + "Body Weight (kg)" + "," + "Held Weight (kg)" + "," + "Arm Length (m)");
+
+                foreach (var info in patientInformation)
+                {
+                    writer.WriteLine(info.timeAndLength.time + "," + info.weights.bodyWeight + "," + info.weights.heldWeight + "," + info.timeAndLength.armLength);
+                }
+            }
+
         }
     }
 }
