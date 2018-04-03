@@ -117,6 +117,7 @@ namespace KinectJam
 
         private double _goalLevel = 0;
         private double _regGoalLevel = 240;
+        List<double> goalList = new List<double>();
 
         private bool sliderMouseDown = false;
         private bool sliderScrolling = false;
@@ -145,6 +146,7 @@ namespace KinectJam
 
         private double _bodyWeightText = 0;
         private double _heldWeightText = 0;
+        private double _goalLevelText = 0;
 
         public KinectDisplay()
         {
@@ -341,6 +343,15 @@ namespace KinectJam
                                             heldWeightList.Add(_heldWeightText);
                                             heldWeightChangeList.Add(0);
                                         }
+
+                                        if (double.TryParse(goalLevelTextbox.Text, out _goalLevelText))
+                                        {
+                                            goalList.Add(_goalLevelText);
+                                        }
+                                        else
+                                        {
+                                            goalList.Add(_regGoalLevel);
+                                        }
                                     }
 
                                     StringBuilder stringBuilder = new StringBuilder();
@@ -452,7 +463,7 @@ namespace KinectJam
 
                                         StringBuilder stringBuilderInternalWork = new StringBuilder();
 
-                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculated, 1)));
+                                        stringBuilderInternalWork.AppendLine(string.Format("{0}", Math.Round(_armLengthCalculated, 2)));
 
                                         TestTextBox.Text = string.Empty;
                                         TestTextBox.Text = stringBuilderInternalWork.ToString();
@@ -987,7 +998,7 @@ namespace KinectJam
             string folderName = @"C:\TestData";
             System.IO.Directory.CreateDirectory(folderName);
 
-            string fileNameAngle = "TestFileAngle.csv";
+            string fileNameAngle = "TestFileAngle" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
             string pathString = System.IO.Path.Combine(folderName, fileNameAngle);
             //string filePath = @"C:\Test.csv";
 
@@ -1005,7 +1016,7 @@ namespace KinectJam
             }
 
 
-            string fileNameTime = "TestFileFrequency.csv";
+            string fileNameTime = "TestFileFrequency" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
             string secondPathString = System.IO.Path.Combine(folderName, fileNameTime);
 
             var crossPoint = crossList.Zip(amplitudeOfCrossList, (ct, ca) => new { crossTime = ct, crossAmplitude = ca });
@@ -1022,7 +1033,7 @@ namespace KinectJam
             }
 
 
-            string fileNameInternalWork = "TestFileInternalWork.csv";
+            string fileNameInternalWork = "TestFileInternalWork" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
             string thirdPathString = System.IO.Path.Combine(folderName, fileNameInternalWork);
 
             var iWork = internalWorkList.Zip(timeScale, (iw, t) => new { iWork = iw, time = t });
@@ -1051,22 +1062,68 @@ namespace KinectJam
                 heldWeightChangeList.Add(_totalTime);
             }
 
+            if (double.TryParse(goalLevelTextbox.Text, out _goalLevelText))
+            {
+                goalList.Add(_goalLevelText);
+            }
+            else
+            {
+                goalList.Add(_regGoalLevel);
+            }
 
-            string fileNamePatientInfo = "TestFilePatientInformation.csv";
+
+            string fileNamePatientInfo = "TestFilePatientInformation" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
             string fourthPathString = System.IO.Path.Combine(folderName, fileNamePatientInfo);
 
             var weightValues = bodyWeightList.Zip(heldWeightList, (bw, hw) => new { bodyWeight = bw, heldWeight = hw });
-            var timeAndLength = armLengthList.Zip(heldWeightChangeList, (l, t) => new { armLength = l, time = t });
-            var patientInformation = timeAndLength.Zip(weightValues, (tl, w) => new { timeAndLength = tl, weights = w });
+            var otherValues = armLengthList.Zip(goalList, (al, g) => new { armLength = al, goallevel = g });
+            var timeAndOther = otherValues.Zip(heldWeightChangeList, (lg, t) => new { lengthAndGoal = lg, time = t });
+            var patientInformation = timeAndOther.Zip(weightValues, (to, w) => new { timeAndOther = to, weights = w });
 
             using (StreamWriter writer = new StreamWriter(fourthPathString))
             {
-                writer.WriteLine("Time (s)" + "," + "Body Weight (kg)" + "," + "Held Weight (kg)" + "," + "Arm Length (m)");
+                writer.WriteLine("Time (s)" + "," + "Body Weight (kg)" + "," + "Held Weight (kg)" + "," + "Arm Length (m)" + "," + "Goal Level");
 
                 foreach (var info in patientInformation)
                 {
-                    writer.WriteLine(info.timeAndLength.time + "," + info.weights.bodyWeight + "," + info.weights.heldWeight + "," + info.timeAndLength.armLength);
+                    writer.WriteLine(info.timeAndOther.time + "," + info.weights.bodyWeight + "," + info.weights.heldWeight + "," + info.timeAndOther.lengthAndGoal.armLength + "," + info.timeAndOther.lengthAndGoal.goallevel);
                 }
+            }
+
+            timeScale.Clear();
+            internalWorkList.Clear();
+            internalPowerList.Clear();
+            angleList.Clear();
+            angleLeftList.Clear();
+            frequencyList.Clear();
+            filteredFrequencyList.Clear();
+            crossList.Clear();
+            amplitudeOfCrossList.Clear();
+            goalList.Clear();
+
+            bodyWeightList.Clear();
+            heldWeightList.Clear();
+            heldWeightChangeList.Clear();
+
+            if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+            {
+                bodyWeightList.Add(_bodyWeightText);
+            }
+
+            if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
+            {
+                heldWeightList.Add(_heldWeightText);
+                armLengthList.Add(_armLengthCalculated);
+                heldWeightChangeList.Add(_totalTime);
+            }
+
+            if (double.TryParse(goalLevelTextbox.Text, out _goalLevelText))
+            {
+                goalList.Add(_goalLevelText);
+            }
+            else
+            {
+                goalList.Add(_regGoalLevel);
             }
 
         }

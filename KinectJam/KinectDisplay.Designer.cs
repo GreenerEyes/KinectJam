@@ -431,9 +431,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(998, 15);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 13);
+            this.label4.Size = new System.Drawing.Size(61, 13);
             this.label4.TabIndex = 41;
-            this.label4.Text = "Goal Level";
+            this.label4.Text = "Goal Level:";
             // 
             // goalLevelTextbox
             // 
