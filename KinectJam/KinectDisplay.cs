@@ -148,6 +148,27 @@ namespace KinectJam
         private double _heldWeightText = 0;
         private double _goalLevelText = 0;
 
+        List<double> _leftArmShoulderXList = new List<double>();
+        List<double> _leftArmShoulderYList = new List<double>();
+        List<double> _leftArmShoulderZList = new List<double>();
+
+        private double _leftShoulderX = 0;
+        private double _leftShoulderY = 0;
+        private double _leftShoulderZ = 0;
+
+        List<double> _leftArmElbowXList = new List<double>();
+        List<double> _leftArmElbowYList = new List<double>();
+        List<double> _leftArmElbowZList = new List<double>();
+
+        private double _leftElbowX = 0;
+        private double _leftElbowY = 0;
+        private double _leftElbowZ = 0;
+
+        //List<double> _leftArmWristList = new List<double>();
+        //List<double> _leftArmHandList = new List<double>();
+
+
+
         public KinectDisplay()
         {
             InitializeComponent();
@@ -330,7 +351,7 @@ namespace KinectJam
 
                                         _armLengthCalculated = shoulderToElbow + elbowToWrist + wristToHand;
                                         armLengthList.Add(_armLengthCalculated);
-                                        //_armLengthCalculatedInches = _armLengthCalculated * 39.37;
+
                                         _exerciseStarted = true;
 
                                         if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
@@ -368,6 +389,7 @@ namespace KinectJam
                                     _wristFinalLeft = skeleton.Joints[JointType.WristLeft];
                                     _elbowFinalLeft = skeleton.Joints[JointType.ElbowLeft];
 
+
                                     double instantWristDistance = Distance(_wristFinal, _wristInitial);
                                     double instantElbowDistance = Distance(_elbowFinal, _elbowInitial);
 
@@ -381,11 +403,26 @@ namespace KinectJam
                                     // Only takes into account right wrist
                                     _totalDistance += instantDistance;
 
-
                                     _totalTime += (1.0 / 30.0);
 
                                     timeScale.Add(_totalTime);
 
+
+                                    _leftShoulderX = skeleton.Joints[JointType.ShoulderLeft].Position.X;
+                                    _leftShoulderY = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
+                                    _leftShoulderZ = skeleton.Joints[JointType.ShoulderLeft].Position.Z;
+
+                                    _leftArmShoulderXList.Add(_leftShoulderX);
+                                    _leftArmShoulderYList.Add(_leftShoulderY);
+                                    _leftArmShoulderZList.Add(_leftShoulderZ);
+
+                                    _leftElbowX = skeleton.Joints[JointType.ElbowLeft].Position.X;
+                                    _leftElbowY = skeleton.Joints[JointType.ElbowLeft].Position.Y;
+                                    _leftElbowZ = skeleton.Joints[JointType.ElbowLeft].Position.Z;
+
+                                    _leftArmElbowXList.Add(_leftElbowX);
+                                    _leftArmElbowYList.Add(_leftElbowY);
+                                    _leftArmElbowZList.Add(_leftElbowZ);
 
                                     // Equation for Internal Work Method
 
@@ -1049,11 +1086,29 @@ namespace KinectJam
                 }
             }
 
+            string fileNameLeftShoulder = "TestFileLeftShoulder" + DateTime.Now.ToString("yyyMMddHHmmss") + ".csv";
+            string fourthPathString = System.IO.Path.Combine(folderName, fileNameLeftShoulder);
 
-            if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+            var shoulderXY = _leftArmShoulderXList.Zip(_leftArmShoulderYList, (x, y) => new { shoulderX = x, shoulderY = y });
+            var shoulderZandTime = _leftArmShoulderZList.Zip(timeScale, (z, t) => new { shoulderZ = z, time = t });
+            var leftShoulder = shoulderXY.Zip(shoulderZandTime, (xy, zt) => new { shoulderXY = xy, shoulderZandTime = zt });
+
+            using (StreamWriter lshoulderwriter = new StreamWriter(fourthPathString))
             {
-                bodyWeightList.Add(_bodyWeightText);
+                lshoulderwriter.WriteLine("Time (s)" + "," + "X" + "," + "Y" + "," + "Z");
+
+                foreach (var item in leftShoulder)
+                {
+                    lshoulderwriter.WriteLine(item.shoulderZandTime.time + "," + item.shoulderXY.shoulderX + "," + item.shoulderXY.shoulderY + "," + item.shoulderZandTime.shoulderZ);
+                }
             }
+
+
+
+                if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
+                {
+                    bodyWeightList.Add(_bodyWeightText);
+                }
 
             if (double.TryParse(heldWeightTextbox.Text, out _heldWeightText))
             {
@@ -1073,14 +1128,14 @@ namespace KinectJam
 
 
             string fileNamePatientInfo = "TestFilePatientInformation" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-            string fourthPathString = System.IO.Path.Combine(folderName, fileNamePatientInfo);
+            string fifthPathString = System.IO.Path.Combine(folderName, fileNamePatientInfo);
 
             var weightValues = bodyWeightList.Zip(heldWeightList, (bw, hw) => new { bodyWeight = bw, heldWeight = hw });
             var otherValues = armLengthList.Zip(goalList, (al, g) => new { armLength = al, goallevel = g });
             var timeAndOther = otherValues.Zip(heldWeightChangeList, (lg, t) => new { lengthAndGoal = lg, time = t });
             var patientInformation = timeAndOther.Zip(weightValues, (to, w) => new { timeAndOther = to, weights = w });
 
-            using (StreamWriter writer = new StreamWriter(fourthPathString))
+            using (StreamWriter writer = new StreamWriter(fifthPathString))
             {
                 writer.WriteLine("Time (s)" + "," + "Body Weight (kg)" + "," + "Held Weight (kg)" + "," + "Arm Length (m)" + "," + "Goal Level");
 
@@ -1100,6 +1155,10 @@ namespace KinectJam
             crossList.Clear();
             amplitudeOfCrossList.Clear();
             goalList.Clear();
+
+            _leftArmShoulderXList.Clear();
+            _leftArmShoulderYList.Clear();
+            _leftArmShoulderZList.Clear();
 
             bodyWeightList.Clear();
             heldWeightList.Clear();
