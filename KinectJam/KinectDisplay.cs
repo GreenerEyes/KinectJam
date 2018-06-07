@@ -180,10 +180,29 @@ namespace KinectJam
         List<double> _rightShoulderYList = new List<double>();
         List<double> _rightShoulderZList = new List<double>();
 
+        List<double> _rightElbowXList = new List<double>();
+        List<double> _rightElbowYList = new List<double>();
+        List<double> _rightElbowZList = new List<double>();
+
+        List<double> _rightWristXList = new List<double>();
+        List<double> _rightWristYList = new List<double>();
+        List<double> _rightWristZList = new List<double>();
 
         List<double> _rightHandXList = new List<double>();
         List<double> _rightHandYList = new List<double>();
         List<double> _rightHandZList = new List<double>();
+
+        List<double> _headXList = new List<double>();
+        List<double> _headYList = new List<double>();
+        List<double> _headZList = new List<double>();
+
+        List<double> _centerShoulderXList = new List<double>();
+        List<double> _centerShoulderYList = new List<double>();
+        List<double> _centerShoulderZList = new List<double>();
+
+        List<double> _spineXList = new List<double>();
+        List<double> _spineYList = new List<double>();
+        List<double> _spineZList = new List<double>();
 
         string folderName = @"C:\TestData";
 
@@ -429,33 +448,17 @@ namespace KinectJam
 
                                     // Joint saving
 
-                                    _leftShoulderX = skeleton.Joints[JointType.ShoulderLeft].Position.X;
-                                    _leftShoulderY = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
-                                    _leftShoulderZ = skeleton.Joints[JointType.ShoulderLeft].Position.Z;
-
-                                    _leftArmShoulderXList.Add(_leftShoulderX);
-                                    _leftArmShoulderYList.Add(_leftShoulderY);
-                                    _leftArmShoulderZList.Add(_leftShoulderZ);
-
-                                    _leftElbowX = skeleton.Joints[JointType.ElbowLeft].Position.X;
-                                    _leftElbowY = skeleton.Joints[JointType.ElbowLeft].Position.Y;
-                                    _leftElbowZ = skeleton.Joints[JointType.ElbowLeft].Position.Z;
-
-                                    _leftArmElbowXList.Add(_leftElbowX);
-                                    _leftArmElbowYList.Add(_leftElbowY);
-                                    _leftArmElbowZList.Add(_leftElbowZ);
-
-                                    _leftWristX = skeleton.Joints[JointType.WristLeft].Position.X;
-                                    _leftWristY = skeleton.Joints[JointType.WristLeft].Position.Y;
-                                    _leftWristZ = skeleton.Joints[JointType.WristLeft].Position.Z;
-
-                                    _leftArmWristXList.Add(_leftWristX);
-                                    _leftArmWristYList.Add(_leftWristY);
-                                    _leftArmWristZList.Add(_leftWristZ);
-
+                                    AddToJointList(skeleton.Joints[JointType.ShoulderLeft], _leftArmShoulderXList, _leftArmShoulderYList, _leftArmShoulderZList);
+                                    AddToJointList(skeleton.Joints[JointType.ElbowLeft], _leftArmElbowXList, _leftArmElbowYList, _leftArmElbowZList);
+                                    AddToJointList(skeleton.Joints[JointType.WristLeft], _leftArmWristXList, _leftArmWristYList, _leftArmWristZList);
                                     AddToJointList(skeleton.Joints[JointType.HandLeft], _leftArmHandXList, _leftArmHandYList, _leftArmHandZList);
                                     AddToJointList(skeleton.Joints[JointType.ShoulderRight], _rightShoulderXList, _rightShoulderYList, _rightShoulderZList);
+                                    AddToJointList(skeleton.Joints[JointType.ElbowRight], _rightElbowXList, _rightElbowYList, _rightElbowZList);
+                                    AddToJointList(skeleton.Joints[JointType.WristRight], _rightWristXList, _rightWristYList, _rightWristZList);
                                     AddToJointList(skeleton.Joints[JointType.HandRight], _rightHandXList, _rightHandYList, _rightHandZList);
+                                    AddToJointList(skeleton.Joints[JointType.Head], _headXList, _headYList, _headZList);
+                                    AddToJointList(skeleton.Joints[JointType.ShoulderCenter], _centerShoulderXList, _centerShoulderYList, _centerShoulderZList);
+                                    AddToJointList(skeleton.Joints[JointType.Spine], _spineXList, _spineYList, _spineZList);
 
                                     // Equation for Internal Work Method
 
@@ -1156,77 +1159,17 @@ namespace KinectJam
                 }
             }
 
-            string fileNameLeftShoulder = "TestFileLeftShoulder" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-            string fourthPathString = System.IO.Path.Combine(folderName, fileNameLeftShoulder);
-
-            var shoulderXY = _leftArmShoulderXList.Zip(_leftArmShoulderYList, (x, y) => new { shoulderX = x, shoulderY = y });
-            var shoulderZandTime = _leftArmShoulderZList.Zip(timeScale, (z, t) => new { shoulderZ = z, time = t });
-            var leftShoulder = shoulderXY.Zip(shoulderZandTime, (xy, zt) => new { shoulderXY = xy, shoulderZandTime = zt });
-
-            using (StreamWriter lShoulderWriter = new StreamWriter(fourthPathString))
-            {
-                lShoulderWriter.WriteLine("Time (s)" + "," + "X" + "," + "Y" + "," + "Z");
-
-                foreach (var item in leftShoulder)
-                {
-                    lShoulderWriter.WriteLine(item.shoulderZandTime.time + "," + item.shoulderXY.shoulderX + "," + item.shoulderXY.shoulderY + "," + item.shoulderZandTime.shoulderZ);
-                }
-            }
-
-            string fileNameLeftElbow = "TestFileLeftElbow" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-            string elbowPathString = System.IO.Path.Combine(folderName, fileNameLeftElbow);
-
-            var leftElbowXY = _leftArmElbowXList.Zip(_leftArmElbowYList, (x, y) => new { elbowX = x, elbowY = y });
-            var leftElbowZandTime = _leftArmElbowZList.Zip(timeScale, (z, t) => new { elbowZ = z, time = t });
-            var leftElbow = leftElbowXY.Zip(leftElbowZandTime, (xy, zt) => new { elbowXY = xy, elbowZT = zt });
-
-            using (StreamWriter lElbowWriter = new StreamWriter(elbowPathString))
-            {
-                lElbowWriter.WriteLine("Time (s)" + "," + "X" + "," + "Y" + "," + "Z");
-
-                foreach (var item in leftElbow)
-                {
-                    lElbowWriter.WriteLine(item.elbowZT.time + "," + item.elbowXY.elbowX + "," + item.elbowXY.elbowY + "," + item.elbowZT.elbowZ);
-                }
-            }
-
-
-            string fileNameLeftWrist = "TestFileLeftWrist" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-            string wristPathString = System.IO.Path.Combine(folderName, fileNameLeftWrist);
-
-            var leftWristXY = _leftArmWristXList.Zip(_leftArmWristYList, (x, y) => new { wristX = x, wristY = y });
-            var leftWristZandTime = _leftArmWristZList.Zip(timeScale, (z, t) => new { wristZ = z, time = t });
-            var leftWrist = leftWristXY.Zip(leftWristZandTime, (xy, zt) => new { wristXY = xy, wristZT = zt });
-
-            using (StreamWriter lWristWriter = new StreamWriter(wristPathString))
-            {
-                lWristWriter.WriteLine("Time (s)" + "," + "X" + "," + "Y" + "," + "Z");
-
-                foreach (var item in leftWrist)
-                {
-                    lWristWriter.WriteLine(item.wristZT.time + "," + item.wristXY.wristX + "," + item.wristXY.wristY + "," + item.wristZT.wristZ);
-                }
-            }
-
-            string fileNameLeftHand = "TestFileLeftHand" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-            string handPathString = System.IO.Path.Combine(folderName, fileNameLeftHand);
-
-            var leftHandXY = _leftArmHandXList.Zip(_leftArmHandYList, (x, y) => new { handX = x, handY = y });
-            var leftHandZandTime = _leftArmHandZList.Zip(timeScale, (z, t) => new { handZ = z, time = t });
-            var leftHand = leftHandXY.Zip(leftHandZandTime, (xy, zt) => new { handXY = xy, handZT = zt });
-
-            using (StreamWriter lHandWriter = new StreamWriter(handPathString))
-            {
-                lHandWriter.WriteLine("Time (s)" + "," + "X" + "," + "Y" + "," + "Z");
-
-                foreach (var item in leftHand)
-                {
-                    lHandWriter.WriteLine(item.handZT.time + "," + item.handXY.handX + "," + item.handXY.handY + "," + item.handZT.handZ);
-                }
-            }
-
+            SaveJointsToFile("TestFileLeftShoulder", _leftArmShoulderXList, _leftArmShoulderYList, _leftArmShoulderZList);
+            SaveJointsToFile("TestFileLeftElbow", _leftArmElbowXList, _leftArmElbowYList, _leftArmElbowZList);
+            SaveJointsToFile("TestFileLeftWrist", _leftArmWristXList, _leftArmWristYList, _leftArmWristZList);
+            SaveJointsToFile("TestFileLeftHand", _leftArmHandXList, _leftArmHandYList, _leftArmHandZList);
             SaveJointsToFile("TestFileRightShoulder", _rightShoulderXList, _rightShoulderYList, _rightShoulderZList);
-
+            SaveJointsToFile("TestFileRightElbow", _rightElbowXList, _rightElbowYList, _rightElbowZList);
+            SaveJointsToFile("TestFileRightWrist", _rightWristXList, _rightWristYList, _rightWristZList);
+            SaveJointsToFile("TestFileRightHand", _rightHandXList, _rightHandYList, _rightHandZList);
+            SaveJointsToFile("TestFileHead", _headXList, _headYList, _headZList);
+            SaveJointsToFile("TestFileCenterShoulder", _centerShoulderXList, _centerShoulderYList, _centerShoulderZList);
+            SaveJointsToFile("TestFileSpine", _spineXList, _spineYList, _spineZList);
 
             if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
             {
@@ -1279,21 +1222,21 @@ namespace KinectJam
             amplitudeOfCrossList.Clear();
             goalList.Clear();
 
-            _leftArmShoulderXList.Clear();
-            _leftArmShoulderYList.Clear();
-            _leftArmShoulderZList.Clear();
+            //_leftArmShoulderXList.Clear();
+            //_leftArmShoulderYList.Clear();
+            //_leftArmShoulderZList.Clear();
 
-            _leftArmElbowXList.Clear();
-            _leftArmElbowYList.Clear();
-            _leftArmElbowZList.Clear();
+            //_leftArmElbowXList.Clear();
+            //_leftArmElbowYList.Clear();
+            //_leftArmElbowZList.Clear();
 
-            _leftArmWristXList.Clear();
-            _leftArmWristYList.Clear();
-            _leftArmWristZList.Clear();
+            //_leftArmWristXList.Clear();
+            //_leftArmWristYList.Clear();
+            //_leftArmWristZList.Clear();
 
-            _leftArmHandXList.Clear();
-            _leftArmHandYList.Clear();
-            _leftArmHandZList.Clear();
+            //_leftArmHandXList.Clear();
+            //_leftArmHandYList.Clear();
+            //_leftArmHandZList.Clear();
 
             bodyWeightList.Clear();
             heldWeightList.Clear();
