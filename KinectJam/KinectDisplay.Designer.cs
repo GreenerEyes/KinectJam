@@ -37,6 +37,7 @@
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMessages = new System.Windows.Forms.RichTextBox();
             this.video = new System.Windows.Forms.PictureBox();
             this.DistanceWorkTextBox = new System.Windows.Forms.RichTextBox();
@@ -56,7 +57,7 @@
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
             this.RecordButton = new System.Windows.Forms.Button();
-            this.AngleGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.SecondGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.FilteredFrequencyTextBox = new System.Windows.Forms.RichTextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -75,7 +76,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AngleGraph)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SecondGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // rtbMessages
@@ -274,35 +275,41 @@
             this.RecordButton.UseVisualStyleBackColor = true;
             this.RecordButton.Click += new System.EventHandler(this.RecordButton_Click);
             // 
-            // AngleGraph
+            // SecondGraph
             // 
             chartArea2.Name = "ChartArea1";
-            this.AngleGraph.ChartAreas.Add(chartArea2);
+            this.SecondGraph.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
-            this.AngleGraph.Legends.Add(legend2);
-            this.AngleGraph.Location = new System.Drawing.Point(939, 56);
-            this.AngleGraph.Name = "AngleGraph";
+            this.SecondGraph.Legends.Add(legend2);
+            this.SecondGraph.Location = new System.Drawing.Point(939, 56);
+            this.SecondGraph.Name = "SecondGraph";
             series3.BorderWidth = 5;
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series3.Legend = "Legend1";
-            series3.Name = "Arm Angle: Right";
+            series3.Name = "X";
             series4.BorderWidth = 5;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series4.Legend = "Legend1";
-            series4.Name = "Filtered Signal";
+            series4.Name = "Y";
             series5.BorderWidth = 5;
             series5.ChartArea = "ChartArea1";
             series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series5.Legend = "Legend1";
-            series5.Name = "Arm Angle: Left";
-            this.AngleGraph.Series.Add(series3);
-            this.AngleGraph.Series.Add(series4);
-            this.AngleGraph.Series.Add(series5);
-            this.AngleGraph.Size = new System.Drawing.Size(386, 317);
-            this.AngleGraph.TabIndex = 26;
-            this.AngleGraph.Text = "chart1";
+            series5.Name = "Z";
+            series6.BorderWidth = 5;
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series6.Legend = "Legend1";
+            series6.Name = "Total";
+            this.SecondGraph.Series.Add(series3);
+            this.SecondGraph.Series.Add(series4);
+            this.SecondGraph.Series.Add(series5);
+            this.SecondGraph.Series.Add(series6);
+            this.SecondGraph.Size = new System.Drawing.Size(386, 317);
+            this.SecondGraph.TabIndex = 26;
+            this.SecondGraph.Text = "chart1";
             // 
             // FilteredFrequencyTextBox
             // 
@@ -462,7 +469,7 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.FilteredFrequencyTextBox);
-            this.Controls.Add(this.AngleGraph);
+            this.Controls.Add(this.SecondGraph);
             this.Controls.Add(this.RecordButton);
             this.Controls.Add(this.ContinueButton);
             this.Controls.Add(this.PauseButton);
@@ -488,7 +495,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.video)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AngleSlider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AngleGraph)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SecondGraph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -515,7 +522,7 @@
         private System.Windows.Forms.Button PauseButton;
         private System.Windows.Forms.Button ContinueButton;
         private System.Windows.Forms.Button RecordButton;
-        private System.Windows.Forms.DataVisualization.Charting.Chart AngleGraph;
+        private System.Windows.Forms.DataVisualization.Charting.Chart SecondGraph;
         private System.Windows.Forms.RichTextBox FilteredFrequencyTextBox;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;

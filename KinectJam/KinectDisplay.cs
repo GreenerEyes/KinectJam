@@ -41,7 +41,7 @@ namespace KinectJam
         private const double _bodyCenterThickness = 10;
         private const double _clipBoundsThickness = 10;
         private const int _maxPowerSize = 400;
-        private const int _maxAngleSize = 180;
+        private const int _maxAngleSize = 1;
 
         private Graphics _graphics;
         private Rectangle _rectangle = new Rectangle(340, 90, 190, 150);
@@ -114,6 +114,12 @@ namespace KinectJam
         private double[] angleArray = new double[50];
         private double[] filteredAngleArray = new double[50];
         private double[] angleArrayLeft = new double[50];
+
+        private double[] xLeftDistanceArray = new double[50];
+        private double[] yLeftDistanceArray = new double[50];
+        private double[] zLeftDistanceArray = new double[50];
+        private double[] totalLeftDistanceArray = new double[50];
+
 
         private double _goalLevel = 0;
         private double _regGoalLevel = 240;
@@ -206,6 +212,25 @@ namespace KinectJam
 
         string folderName = @"C:\TestData";
 
+        List<double> _xLeftWristDistanceList = new List<double>();
+        List<double> _yLeftWristDistanceList = new List<double>();
+        List<double> _zLeftWristDistanceList = new List<double>();
+
+        List<double> _xRightWristDistanceList = new List<double>();
+        List<double> _yRightWristDistanceList = new List<double>();
+        List<double> _zRightWristDistanceList = new List<double>();
+
+        double _xLeftWristDistance = 0;
+        double _yLeftWristDistance = 0;
+        double _zLeftWristDistance = 0;
+
+        double _xRightWristDistance = 0;
+        double _yRightWristDistance = 0;
+        double _zRightWristDistance = 0;
+
+        double _leftWristTotalDistance = 0;
+        double _rightWristTotalDistance = 0;
+
 
         public KinectDisplay()
         {
@@ -214,7 +239,12 @@ namespace KinectJam
             //timeArray.Add(initialTime);
             for (int i = 0; i < 50; i++)
             {
-                angleArray[i] = 0;
+                //angleArray[i] = 0;
+
+                xLeftDistanceArray[i] = 0;
+                yLeftDistanceArray[i] = 0;
+                zLeftDistanceArray[i] = 0;
+                totalLeftDistanceArray[i] = 0;
 
                 workArray[i] = 0;
                 if (i == 49)
@@ -228,10 +258,10 @@ namespace KinectJam
             PowerGraph.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
             PowerGraph.ChartAreas[0].AxisX2.LabelStyle.Format = "#.#";
 
-            AngleGraph.ChartAreas[0].AxisY.Maximum = _maxAngleSize;
-            AngleGraph.ChartAreas[0].AxisY.Minimum = 0;
-            AngleGraph.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
-            AngleGraph.ChartAreas[0].AxisX2.LabelStyle.Format = "#.#";
+            SecondGraph.ChartAreas[0].AxisY.Maximum = _maxAngleSize;
+            SecondGraph.ChartAreas[0].AxisY.Minimum = -(_maxAngleSize);
+            SecondGraph.ChartAreas[0].AxisX.LabelStyle.Format = "#.#";
+            SecondGraph.ChartAreas[0].AxisX2.LabelStyle.Format = "#.#";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -413,6 +443,21 @@ namespace KinectJam
                                         }
                                     }
 
+                                    DistanceIntoList(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], _xLeftWristDistanceList, _yLeftWristDistanceList, _zLeftWristDistanceList);
+                                    DistanceIntoList(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], _xRightWristDistanceList, _yRightWristDistanceList, _zRightWristDistanceList);
+
+                                    _xLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "X");
+                                    _yLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "Y");
+                                    _zLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "Z");
+
+                                    _xRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "X");
+                                    _yRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "Y");
+                                    _zRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "Z");
+
+                                    _leftWristTotalDistance = Distance(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine]);
+                                    _rightWristTotalDistance = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine]);
+
+
                                     StringBuilder stringBuilder = new StringBuilder();
                                     
                                     angleList.Add(angle);
@@ -572,8 +617,10 @@ namespace KinectJam
                                     {
                                         GraphingPower(_totalTime, Math.Round(filteredInternalPower, 2), _regGoalLevel);
                                     }
-                                    
-                                    GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
+
+                                    //GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
+
+                                    GraphingDistances(_totalTime, Math.Round(_xLeftWristDistance, 2), Math.Round(_yLeftWristDistance, 2), Math.Round(_zLeftWristDistance, 2), Math.Round(_leftWristTotalDistance, 2));
 
                                     _wristInitial = _wristFinal;
                                     _elbowInitial = _elbowFinal;
@@ -708,7 +755,39 @@ namespace KinectJam
         {
             double changeX = Math.Pow(final.Position.X - initial.Position.X, 2);
             double changeY = Math.Pow(final.Position.Y - initial.Position.Y, 2);
-            return Math.Sqrt(changeX + changeY);
+            double changeZ = Math.Pow(final.Position.X - initial.Position.Z, 2);
+            return Math.Sqrt(changeX + changeY + changeZ);
+        }
+
+        private void DistanceIntoList(Joint originJoint, Joint trackedJoint, List<double> xCoordinate, List<double> yCoordinate, List<double> zCoordinate)
+        {
+            double changeX = trackedJoint.Position.X - originJoint.Position.X;
+            xCoordinate.Add(changeX);
+
+            double changeY = trackedJoint.Position.Y - originJoint.Position.Y;
+            yCoordinate.Add(changeY);
+
+            double changeZ = trackedJoint.Position.Z - originJoint.Position.Z;
+            zCoordinate.Add(changeZ);
+        }
+
+        private double Change(Joint final, Joint initial, string XYZ)
+        {
+            if (XYZ == "X")
+            {
+                return final.Position.X - initial.Position.X;
+            }
+
+            if (XYZ == "Y")
+            {
+                return final.Position.Y - initial.Position.Y;
+            }
+
+            if (XYZ == "Z")
+            {
+                return final.Position.Z - initial.Position.Z;
+            }
+            return 0;
         }
 
         //private double Accel(float finalPosition, float initialPosition)
@@ -988,37 +1067,86 @@ namespace KinectJam
             }
         }
 
-        private void GraphingAngle(double time, double angleValue, double filteredValue, double angleValueLeft)
+        //private void GraphingAngle(double time, double angleValue, double filteredValue, double angleValueLeft)
+        //{
+        //    if (AngleGraph.IsHandleCreated && _paused == false)
+        //    {
+        //        angleArray[angleArray.Length - 1] = angleValue;
+        //        Array.Copy(angleArray, 1, angleArray, 0, angleArray.Length - 1);
+        //        timeArray[timeArray.Length - 1] = Math.Round(time, 2);
+        //        Array.Copy(timeArray, 1, timeArray, 0, timeArray.Length - 1);
+
+        //        filteredAngleArray[filteredAngleArray.Length - 1] = filteredValue;
+        //        Array.Copy(filteredAngleArray, 1, filteredAngleArray, 0, filteredAngleArray.Length - 1);
+
+        //        angleArrayLeft[angleArrayLeft.Length - 1] = angleValueLeft;
+        //        Array.Copy(angleArrayLeft, 1, angleArrayLeft, 0, angleArrayLeft.Length - 1);
+
+        //        AngleGraph.Series["Arm Angle: Right"].Points.Clear();
+        //        for (int i = 0; i < angleArray.Count() - 1; i++)
+        //        {
+        //            AngleGraph.Series["Arm Angle: Right"].Points.AddXY(timeArray[i], angleArray[i]);
+        //        }
+
+        //        AngleGraph.Series["Filtered Signal"].Points.Clear();
+        //        for (int i = 0; i < filteredAngleArray.Count() - 1; i++)
+        //        {
+        //            AngleGraph.Series["Filtered Signal"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+        //        }
+
+        //        AngleGraph.Series["Arm Angle: Left"].Points.Clear();
+        //        for (int i = 0; i < angleArrayLeft.Count() - 1; i++)
+        //        {
+        //            AngleGraph.Series["Arm Angle: Left"].Points.AddXY(timeArray[i], angleArrayLeft[i]);
+        //        }
+        //    }
+        //}
+
+        private void GraphingDistances(double time, double xCoordinate, double yCoordinate, double zCoordinate, double totalDistance)
         {
-            if (AngleGraph.IsHandleCreated && _paused == false)
+            if (SecondGraph.IsHandleCreated && _paused == false)
             {
-                angleArray[angleArray.Length - 1] = angleValue;
-                Array.Copy(angleArray, 1, angleArray, 0, angleArray.Length - 1);
+                xLeftDistanceArray[xLeftDistanceArray.Length - 1] = xCoordinate;
+                Array.Copy(xLeftDistanceArray, 1, xLeftDistanceArray, 0, xLeftDistanceArray.Length - 1);
+
                 timeArray[timeArray.Length - 1] = Math.Round(time, 2);
                 Array.Copy(timeArray, 1, timeArray, 0, timeArray.Length - 1);
 
-                filteredAngleArray[filteredAngleArray.Length - 1] = filteredValue;
-                Array.Copy(filteredAngleArray, 1, filteredAngleArray, 0, filteredAngleArray.Length - 1);
+                yLeftDistanceArray[yLeftDistanceArray.Length - 1] = yCoordinate;
+                Array.Copy(yLeftDistanceArray, 1, yLeftDistanceArray, 0, yLeftDistanceArray.Length - 1);
 
-                angleArrayLeft[angleArrayLeft.Length - 1] = angleValueLeft;
-                Array.Copy(angleArrayLeft, 1, angleArrayLeft, 0, angleArrayLeft.Length - 1);
+                zLeftDistanceArray[zLeftDistanceArray.Length - 1] = zCoordinate;
+                Array.Copy(zLeftDistanceArray, 1, zLeftDistanceArray, 0, zLeftDistanceArray.Length - 1);
 
-                AngleGraph.Series["Arm Angle: Right"].Points.Clear();
-                for (int i = 0; i < angleArray.Count() - 1; i++)
+                totalLeftDistanceArray[totalLeftDistanceArray.Length - 1] = totalDistance;
+                Array.Copy(totalLeftDistanceArray, 1,totalLeftDistanceArray, 0, totalLeftDistanceArray.Length - 1);
+
+                SecondGraph.Series["X"].Points.Clear();
+
+                for (int i = 0; i < xLeftDistanceArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["Arm Angle: Right"].Points.AddXY(timeArray[i], angleArray[i]);
+                    SecondGraph.Series["X"].Points.AddXY(timeArray[i], xLeftDistanceArray[i]);
                 }
 
-                AngleGraph.Series["Filtered Signal"].Points.Clear();
-                for (int i = 0; i < filteredAngleArray.Count() - 1; i++)
+                SecondGraph.Series["Y"].Points.Clear();
+
+                for (int i = 0; i < yLeftDistanceArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["Filtered Signal"].Points.AddXY(timeArray[i], filteredAngleArray[i]);
+                    SecondGraph.Series["Y"].Points.AddXY(timeArray[i], yLeftDistanceArray[i]);
                 }
 
-                AngleGraph.Series["Arm Angle: Left"].Points.Clear();
-                for (int i = 0; i < angleArrayLeft.Count() - 1; i++)
+                SecondGraph.Series["Z"].Points.Clear();
+
+                for (int i = 0; i < zLeftDistanceArray.Count() - 1; i++)
                 {
-                    AngleGraph.Series["Arm Angle: Left"].Points.AddXY(timeArray[i], angleArrayLeft[i]);
+                    SecondGraph.Series["Z"].Points.AddXY(timeArray[i], zLeftDistanceArray[i]);
+                }
+
+                SecondGraph.Series["Total"].Points.Clear();
+
+                for (int i=0; i<totalLeftDistanceArray.Count() - 1; i++)
+                {
+                    SecondGraph.Series["Total"].Points.AddXY(timeArray[i], totalLeftDistanceArray[i]);
                 }
             }
         }
