@@ -158,13 +158,25 @@ namespace KinectJam
         List<double> _leftArmShoulderYList = new List<double>();
         List<double> _leftArmShoulderZList = new List<double>();
 
+        private double _leftShoulderX = 0;
+        private double _leftShoulderY = 0;
+        private double _leftShoulderZ = 0;
+
         List<double> _leftArmElbowXList = new List<double>();
         List<double> _leftArmElbowYList = new List<double>();
         List<double> _leftArmElbowZList = new List<double>();
 
+        private double _leftElbowX = 0;
+        private double _leftElbowY = 0;
+        private double _leftElbowZ = 0;
+
         List<double> _leftArmWristXList = new List<double>();
         List<double> _leftArmWristYList = new List<double>();
         List<double> _leftArmWristZList = new List<double>();
+
+        private double _leftWristX = 0;
+        private double _leftWristY = 0;
+        private double _leftWristZ = 0;
 
         List<double> _leftArmHandXList = new List<double>();
         List<double> _leftArmHandYList = new List<double>();
@@ -1286,8 +1298,6 @@ namespace KinectJam
             SaveJointsToFile("TestFileHead", _headXList, _headYList, _headZList);
             SaveJointsToFile("TestFileCenterShoulder", _centerShoulderXList, _centerShoulderYList, _centerShoulderZList);
             SaveJointsToFile("TestFileSpine", _spineXList, _spineYList, _spineZList);
-            SaveJointsToFile("TestFileLeftWristDistances", _xLeftWristDistanceList, _yLeftWristDistanceList, _zLeftWristDistanceList);
-            SaveJointsToFile("TestFileRightWristDistances", _xRightWristDistanceList, _yRightWristDistanceList, _zRightWristDistanceList);
 
             if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
             {
