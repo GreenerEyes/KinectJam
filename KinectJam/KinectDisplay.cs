@@ -649,7 +649,7 @@ namespace KinectJam
 
                                     //GraphingAngle(_totalTime, Math.Round(angle, 2), filteredangle, angleLeft);
 
-                                    GraphingDistances(_totalTime, Math.Round(_xLeftWristDistance, 2), Math.Round(_yLeftWristDistance, 2), Math.Round(_zLeftWristDistance, 2), Math.Round(_leftWristTotalDistance, 2));
+                                    GraphingDistances(_totalTime, Math.Round(_xLeftWristDistance, 2), Math.Round(_yLeftWristDistance, 2), Math.Round(_zLeftWristDistance, 2));
 
                                     _wristInitial = _wristFinal;
                                     _elbowInitial = _elbowFinal;
@@ -1134,7 +1134,7 @@ namespace KinectJam
         //    }
         //}
 
-        private void GraphingDistances(double time, double xCoordinate, double yCoordinate, double zCoordinate, double totalDistance)
+        private void GraphingDistances(double time, double xCoordinate, double yCoordinate, double zCoordinate)
         {
             if (SecondGraph.IsHandleCreated && _paused == false)
             {
@@ -1150,8 +1150,8 @@ namespace KinectJam
                 zLeftDistanceArray[zLeftDistanceArray.Length - 1] = zCoordinate;
                 Array.Copy(zLeftDistanceArray, 1, zLeftDistanceArray, 0, zLeftDistanceArray.Length - 1);
 
-                totalLeftDistanceArray[totalLeftDistanceArray.Length - 1] = totalDistance;
-                Array.Copy(totalLeftDistanceArray, 1,totalLeftDistanceArray, 0, totalLeftDistanceArray.Length - 1);
+                //totalLeftDistanceArray[totalLeftDistanceArray.Length - 1] = totalDistance;
+                //Array.Copy(totalLeftDistanceArray, 1,totalLeftDistanceArray, 0, totalLeftDistanceArray.Length - 1);
 
                 SecondGraph.Series["X"].Points.Clear();
 
@@ -1174,12 +1174,12 @@ namespace KinectJam
                     SecondGraph.Series["Z"].Points.AddXY(timeArray[i], zLeftDistanceArray[i]);
                 }
 
-                SecondGraph.Series["Total"].Points.Clear();
+                //SecondGraph.Series["Total"].Points.Clear();
 
-                for (int i=0; i<totalLeftDistanceArray.Count() - 1; i++)
-                {
-                    SecondGraph.Series["Total"].Points.AddXY(timeArray[i], totalLeftDistanceArray[i]);
-                }
+                //for (int i=0; i<totalLeftDistanceArray.Count() - 1; i++)
+                //{
+                //    SecondGraph.Series["Total"].Points.AddXY(timeArray[i], totalLeftDistanceArray[i]);
+                //}
             }
         }
 
