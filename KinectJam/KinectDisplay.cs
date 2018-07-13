@@ -231,6 +231,20 @@ namespace KinectJam
         double _leftWristTotalDistance = 0;
         double _rightWristTotalDistance = 0;
 
+        private Joint _initialLeftWristDistance = new Joint();
+
+        private Joint _initialRightWristDistance = new Joint();
+
+        private double _summedLeftWristTotalDistance = 0;
+        private double _summedRightWristTotalDistance = 0;
+
+        List<double> _xLeftWristDistanceChangeList = new List<double>();
+        List<double> _yLeftWristDistanceChangeList = new List<double>();
+        List<double> _zLeftWristDistanceChangeList = new List<double>();
+
+        List<double> _xRightWristDistanceChangeList = new List<double>();
+        List<double> _yRightWristDistanceChangeList = new List<double>();
+        List<double> _zRightWristDistanceChangeList = new List<double>();
 
         public KinectDisplay()
         {
@@ -413,6 +427,9 @@ namespace KinectJam
                                         _initialAngleLeft = angleLeft;
                                         _finalAngleLeft = angleLeft;
 
+                                        _initialLeftWristDistance = skeleton.Joints[JointType.WristLeft];
+                                        _initialRightWristDistance = skeleton.Joints[JointType.WristRight];
+
                                         double shoulderToElbow = Distance(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
                                         double elbowToWrist = Distance(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
                                         double wristToHand = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
@@ -447,16 +464,28 @@ namespace KinectJam
                                     DistanceIntoList(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], _xRightWristDistanceList, _yRightWristDistanceList, _zRightWristDistanceList);
 
                                     _xLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "X");
+                                    _xLeftWristDistanceChangeList.Add(_xLeftWristDistance - _initialLeftWristDistance.Position.X);
+
                                     _yLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "Y");
+                                    _yLeftWristDistanceChangeList.Add(_yLeftWristDistance - _initialLeftWristDistance.Position.Y);
+
                                     _zLeftWristDistance = Change(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine], "Z");
+                                    _zLeftWristDistanceChangeList.Add(_zLeftWristDistance - _initialLeftWristDistance.Position.Z);
 
                                     _xRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "X");
+                                    _xRightWristDistanceChangeList.Add(_xRightWristDistance - _initialRightWristDistance.Position.X);
+
                                     _yRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "Y");
+                                    _yRightWristDistanceChangeList.Add(_yRightWristDistance - _initialRightWristDistance.Position.Y);
+
                                     _zRightWristDistance = Change(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine], "Z");
+                                    _zRightWristDistanceChangeList.Add(_zRightWristDistance - _initialRightWristDistance.Position.Z);
 
                                     _leftWristTotalDistance = Distance(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.Spine]);
-                                    _rightWristTotalDistance = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine]);
+                                    _summedLeftWristTotalDistance = _leftWristTotalDistance += _summedLeftWristTotalDistance;
 
+                                    _rightWristTotalDistance = Distance(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.Spine]);
+                                    _summedRightWristTotalDistance = _rightWristTotalDistance += _rightWristTotalDistance;
 
                                     StringBuilder stringBuilder = new StringBuilder();
                                     
@@ -630,6 +659,9 @@ namespace KinectJam
 
                                     _initialAngle = _finalAngle;
                                     _initialAngleLeft = _finalAngleLeft;
+
+                                    _initialLeftWristDistance = skeleton.Joints[JointType.WristLeft];
+                                    _initialRightWristDistance = skeleton.Joints[JointType.WristRight];
 
                                     //_previousFilteredWork = filteredwork;
                                     _previousFilteredAngle = filteredangle;
@@ -1298,6 +1330,12 @@ namespace KinectJam
             SaveJointsToFile("TestFileHead", _headXList, _headYList, _headZList);
             SaveJointsToFile("TestFileCenterShoulder", _centerShoulderXList, _centerShoulderYList, _centerShoulderZList);
             SaveJointsToFile("TestFileSpine", _spineXList, _spineYList, _spineZList);
+
+            SaveJointsToFile("TestFileDistanceFromLeftWristToSpine", _xLeftWristDistanceList, _yLeftWristDistanceList, _zLeftWristDistanceList);
+            SaveJointsToFile("TestFileDistanceFromRightWristToSpine", _xRightWristDistanceList, _yRightWristDistanceList, _zRightWristDistanceList);
+
+            SaveJointsToFile("TestFileChangingDistanceFromLeftWristToSpine", _xLeftWristDistanceChangeList, _yLeftWristDistanceChangeList, _zLeftWristDistanceChangeList);
+            SaveJointsToFile("TestFileChangingDistanceFromRightWristToSpine", _xRightWristDistanceChangeList, _yRightWristDistanceChangeList, _zRightWristDistanceChangeList);
 
             if (double.TryParse(bodyWeightTextbox.Text, out _bodyWeightText))
             {
